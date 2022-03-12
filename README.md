@@ -2,7 +2,7 @@
 
 `/dev/urandom` is made out of cold hard math. Instead, consider using `/dev/uwurandom`, which generates data through a tiny catgirl furiously typing away utter nonsense inside your computer.
 
-**Disclaimer: I am very bad at C. While I've tested this myself and haven't managed to cause a kernel panic, this is probably not production-quality code. Use at your own risk.**
+**Disclaimer: I am very bad at C. While I've tested this myself and haven't managed to cause a kernel panic, this is not production-quality code. Use at your own risk.**
 
 ## Installation and usage
 
@@ -23,3 +23,9 @@ Usage is also easy! >w<
 ```bash
 sudo insmod uwurandom.ko
 ```
+
+Afterwards, you can just:
+```bash
+cat /dev/uwurandom
+```
+and witness its sheer glory with your own eyes.
