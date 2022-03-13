@@ -1284,10 +1284,6 @@ dev_open(struct inode *ino, struct file *fp) {
         return -ENOMEM;
     }
 
-    uwu_op null_op = {
-        .opcode = UWU_NULL
-    };
-
     data->prev_op = -1;
     data->current_op = 0;
     generate_new_ops(data);
