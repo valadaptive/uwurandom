@@ -172,7 +172,7 @@ const markovArrToC = ({markovArr: table, ngrams}, name) => {
         for (let i = 0; i < choices.length; i++) {
             const {nextChar, nextNgram, cumulativeProbability} = choices[i];
             choiceDefs.push(
-`    {.next_ngram = ${nextNgram}, .next_choice = ${i === choices.length - 1 ? 'NULL' : `&${listName}[${i + 1}]`}, .cumulative_probability = ${cumulativeProbability}, .next_char = '${nextChar}'}`
+`    {.next_ngram = ${nextNgram}, .cumulative_probability = ${cumulativeProbability}, .next_char = '${nextChar}'}`
 );
         }
 

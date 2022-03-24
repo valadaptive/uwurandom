@@ -33,7 +33,6 @@ static dev_t dev_num;
 typedef struct uwu_markov_choice uwu_markov_choice;
 struct uwu_markov_choice {
     size_t next_ngram;
-    uwu_markov_choice* next_choice;
     uint16_t cumulative_probability;
     char next_char;
 };
@@ -101,107 +100,107 @@ typedef struct {
 } uwu_state;
 
 static struct uwu_markov_choice catnonsense_ngram0_choices[] = {
-    {.next_ngram = 0, .next_choice = &catnonsense_ngram0_choices[1], .cumulative_probability = 2, .next_char = 'a'},
-    {.next_ngram = 1, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'm'}
+    {.next_ngram = 0, .cumulative_probability = 2, .next_char = 'a'},
+    {.next_ngram = 1, .cumulative_probability = 3, .next_char = 'm'}
 };
 static struct uwu_markov_choice catnonsense_ngram1_choices[] = {
-    {.next_ngram = 7, .next_choice = &catnonsense_ngram1_choices[1], .cumulative_probability = 3, .next_char = 'r'},
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 4, .next_char = 'e'}
+    {.next_ngram = 7, .cumulative_probability = 3, .next_char = 'r'},
+    {.next_ngram = 6, .cumulative_probability = 4, .next_char = 'e'}
 };
 static struct uwu_markov_choice catnonsense_ngram2_choices[] = {
-    {.next_ngram = 8, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'y'}
+    {.next_ngram = 8, .cumulative_probability = 1, .next_char = 'y'}
 };
 static struct uwu_markov_choice catnonsense_ngram3_choices[] = {
-    {.next_ngram = 9, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'w'}
+    {.next_ngram = 9, .cumulative_probability = 1, .next_char = 'w'}
 };
 static struct uwu_markov_choice catnonsense_ngram4_choices[] = {
-    {.next_ngram = 9, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'w'}
+    {.next_ngram = 9, .cumulative_probability = 1, .next_char = 'w'}
 };
 static struct uwu_markov_choice catnonsense_ngram5_choices[] = {
-    {.next_ngram = 21, .next_choice = &catnonsense_ngram5_choices[1], .cumulative_probability = 6, .next_char = 'm'},
-    {.next_ngram = 22, .next_choice = &catnonsense_ngram5_choices[2], .cumulative_probability = 7, .next_char = 'n'},
-    {.next_ngram = 23, .next_choice = NULL, .cumulative_probability = 8, .next_char = 'p'}
+    {.next_ngram = 21, .cumulative_probability = 6, .next_char = 'm'},
+    {.next_ngram = 22, .cumulative_probability = 7, .next_char = 'n'},
+    {.next_ngram = 23, .cumulative_probability = 8, .next_char = 'p'}
 };
 static struct uwu_markov_choice catnonsense_ngram6_choices[] = {
-    {.next_ngram = 4, .next_choice = &catnonsense_ngram6_choices[1], .cumulative_probability = 3, .next_char = 'o'},
-    {.next_ngram = 5, .next_choice = NULL, .cumulative_probability = 5, .next_char = 'w'}
+    {.next_ngram = 4, .cumulative_probability = 3, .next_char = 'o'},
+    {.next_ngram = 5, .cumulative_probability = 5, .next_char = 'w'}
 };
 static struct uwu_markov_choice catnonsense_ngram7_choices[] = {
-    {.next_ngram = 16, .next_choice = &catnonsense_ngram7_choices[1], .cumulative_probability = 15, .next_char = 'o'},
-    {.next_ngram = 12, .next_choice = &catnonsense_ngram7_choices[2], .cumulative_probability = 24, .next_char = 'a'},
-    {.next_ngram = 18, .next_choice = &catnonsense_ngram7_choices[3], .cumulative_probability = 28, .next_char = 'r'},
-    {.next_ngram = 19, .next_choice = &catnonsense_ngram7_choices[4], .cumulative_probability = 29, .next_char = 'w'},
-    {.next_ngram = 13, .next_choice = NULL, .cumulative_probability = 30, .next_char = 'e'}
+    {.next_ngram = 16, .cumulative_probability = 15, .next_char = 'o'},
+    {.next_ngram = 12, .cumulative_probability = 24, .next_char = 'a'},
+    {.next_ngram = 18, .cumulative_probability = 28, .next_char = 'r'},
+    {.next_ngram = 19, .cumulative_probability = 29, .next_char = 'w'},
+    {.next_ngram = 13, .cumulative_probability = 30, .next_char = 'e'}
 };
 static struct uwu_markov_choice catnonsense_ngram8_choices[] = {
-    {.next_ngram = 26, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 26, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice catnonsense_ngram9_choices[] = {
-    {.next_ngram = 21, .next_choice = &catnonsense_ngram9_choices[1], .cumulative_probability = 22, .next_char = 'm'},
-    {.next_ngram = 24, .next_choice = &catnonsense_ngram9_choices[2], .cumulative_probability = 32, .next_char = 'r'},
-    {.next_ngram = 22, .next_choice = &catnonsense_ngram9_choices[3], .cumulative_probability = 36, .next_char = 'n'},
-    {.next_ngram = 25, .next_choice = &catnonsense_ngram9_choices[4], .cumulative_probability = 37, .next_char = 'w'},
-    {.next_ngram = 23, .next_choice = NULL, .cumulative_probability = 38, .next_char = 'p'}
+    {.next_ngram = 21, .cumulative_probability = 22, .next_char = 'm'},
+    {.next_ngram = 24, .cumulative_probability = 32, .next_char = 'r'},
+    {.next_ngram = 22, .cumulative_probability = 36, .next_char = 'n'},
+    {.next_ngram = 25, .cumulative_probability = 37, .next_char = 'w'},
+    {.next_ngram = 23, .cumulative_probability = 38, .next_char = 'p'}
 };
 static struct uwu_markov_choice catnonsense_ngram10_choices[] = {
-    {.next_ngram = 11, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'u'}
+    {.next_ngram = 11, .cumulative_probability = 1, .next_char = 'u'}
 };
 static struct uwu_markov_choice catnonsense_ngram11_choices[] = {
-    {.next_ngram = 20, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'r'}
+    {.next_ngram = 20, .cumulative_probability = 1, .next_char = 'r'}
 };
 static struct uwu_markov_choice catnonsense_ngram12_choices[] = {
-    {.next_ngram = 3, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 3, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice catnonsense_ngram13_choices[] = {
-    {.next_ngram = 4, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 4, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice catnonsense_ngram14_choices[] = {
-    {.next_ngram = 7, .next_choice = &catnonsense_ngram14_choices[1], .cumulative_probability = 1, .next_char = 'r'},
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'e'}
+    {.next_ngram = 7, .cumulative_probability = 1, .next_char = 'r'},
+    {.next_ngram = 6, .cumulative_probability = 2, .next_char = 'e'}
 };
 static struct uwu_markov_choice catnonsense_ngram15_choices[] = {
-    {.next_ngram = 8, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'y'}
+    {.next_ngram = 8, .cumulative_probability = 1, .next_char = 'y'}
 };
 static struct uwu_markov_choice catnonsense_ngram16_choices[] = {
-    {.next_ngram = 9, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'w'}
+    {.next_ngram = 9, .cumulative_probability = 1, .next_char = 'w'}
 };
 static struct uwu_markov_choice catnonsense_ngram17_choices[] = {
-    {.next_ngram = 10, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'p'}
+    {.next_ngram = 10, .cumulative_probability = 1, .next_char = 'p'}
 };
 static struct uwu_markov_choice catnonsense_ngram18_choices[] = {
-    {.next_ngram = 18, .next_choice = &catnonsense_ngram18_choices[1], .cumulative_probability = 7, .next_char = 'r'},
-    {.next_ngram = 14, .next_choice = &catnonsense_ngram18_choices[2], .cumulative_probability = 10, .next_char = 'm'},
-    {.next_ngram = 16, .next_choice = &catnonsense_ngram18_choices[3], .cumulative_probability = 13, .next_char = 'o'},
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 14, .next_char = 'p'}
+    {.next_ngram = 18, .cumulative_probability = 7, .next_char = 'r'},
+    {.next_ngram = 14, .cumulative_probability = 10, .next_char = 'm'},
+    {.next_ngram = 16, .cumulative_probability = 13, .next_char = 'o'},
+    {.next_ngram = 17, .cumulative_probability = 14, .next_char = 'p'}
 };
 static struct uwu_markov_choice catnonsense_ngram19_choices[] = {
-    {.next_ngram = 21, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'm'}
+    {.next_ngram = 21, .cumulative_probability = 1, .next_char = 'm'}
 };
 static struct uwu_markov_choice catnonsense_ngram20_choices[] = {
-    {.next_ngram = 18, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'r'}
+    {.next_ngram = 18, .cumulative_probability = 1, .next_char = 'r'}
 };
 static struct uwu_markov_choice catnonsense_ngram21_choices[] = {
-    {.next_ngram = 7, .next_choice = &catnonsense_ngram21_choices[1], .cumulative_probability = 17, .next_char = 'r'},
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 30, .next_char = 'e'}
+    {.next_ngram = 7, .cumulative_probability = 17, .next_char = 'r'},
+    {.next_ngram = 6, .cumulative_probability = 30, .next_char = 'e'}
 };
 static struct uwu_markov_choice catnonsense_ngram22_choices[] = {
-    {.next_ngram = 8, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'y'}
+    {.next_ngram = 8, .cumulative_probability = 1, .next_char = 'y'}
 };
 static struct uwu_markov_choice catnonsense_ngram23_choices[] = {
-    {.next_ngram = 11, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'u'}
+    {.next_ngram = 11, .cumulative_probability = 1, .next_char = 'u'}
 };
 static struct uwu_markov_choice catnonsense_ngram24_choices[] = {
-    {.next_ngram = 14, .next_choice = &catnonsense_ngram24_choices[1], .cumulative_probability = 7, .next_char = 'm'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 10, .next_char = 'n'}
+    {.next_ngram = 14, .cumulative_probability = 7, .next_char = 'm'},
+    {.next_ngram = 15, .cumulative_probability = 10, .next_char = 'n'}
 };
 static struct uwu_markov_choice catnonsense_ngram25_choices[] = {
-    {.next_ngram = 25, .next_choice = &catnonsense_ngram25_choices[1], .cumulative_probability = 3, .next_char = 'w'},
-    {.next_ngram = 21, .next_choice = NULL, .cumulative_probability = 4, .next_char = 'm'}
+    {.next_ngram = 25, .cumulative_probability = 3, .next_char = 'w'},
+    {.next_ngram = 21, .cumulative_probability = 4, .next_char = 'm'}
 };
 static struct uwu_markov_choice catnonsense_ngram26_choices[] = {
-    {.next_ngram = 0, .next_choice = &catnonsense_ngram26_choices[1], .cumulative_probability = 4, .next_char = 'a'},
-    {.next_ngram = 2, .next_choice = &catnonsense_ngram26_choices[2], .cumulative_probability = 5, .next_char = 'n'},
-    {.next_ngram = 1, .next_choice = NULL, .cumulative_probability = 6, .next_char = 'm'}
+    {.next_ngram = 0, .cumulative_probability = 4, .next_char = 'a'},
+    {.next_ngram = 2, .cumulative_probability = 5, .next_char = 'n'},
+    {.next_ngram = 1, .cumulative_probability = 6, .next_char = 'm'}
 };
 
 static uwu_markov_ngram catnonsense_ngrams[] = {
@@ -234,133 +233,133 @@ static uwu_markov_ngram catnonsense_ngrams[] = {
     {.choices = catnonsense_ngram26_choices, .total_probability = 6} // ya
 };
 static struct uwu_markov_choice keysmash_ngram0_choices[] = {
-    {.next_ngram = 1, .next_choice = &keysmash_ngram0_choices[1], .cumulative_probability = 4, .next_char = 'a'},
-    {.next_ngram = 10, .next_choice = &keysmash_ngram0_choices[2], .cumulative_probability = 5, .next_char = 'k'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram0_choices[3], .cumulative_probability = 6, .next_char = 'd'},
-    {.next_ngram = 11, .next_choice = &keysmash_ngram0_choices[4], .cumulative_probability = 7, .next_char = 'l'},
-    {.next_ngram = 7, .next_choice = NULL, .cumulative_probability = 8, .next_char = 'h'}
+    {.next_ngram = 1, .cumulative_probability = 4, .next_char = 'a'},
+    {.next_ngram = 10, .cumulative_probability = 5, .next_char = 'k'},
+    {.next_ngram = 3, .cumulative_probability = 6, .next_char = 'd'},
+    {.next_ngram = 11, .cumulative_probability = 7, .next_char = 'l'},
+    {.next_ngram = 7, .cumulative_probability = 8, .next_char = 'h'}
 };
 static struct uwu_markov_choice keysmash_ngram1_choices[] = {
-    {.next_ngram = 7, .next_choice = &keysmash_ngram1_choices[1], .cumulative_probability = 7, .next_char = 'h'},
-    {.next_ngram = 9, .next_choice = &keysmash_ngram1_choices[2], .cumulative_probability = 13, .next_char = 'j'},
-    {.next_ngram = 5, .next_choice = &keysmash_ngram1_choices[3], .cumulative_probability = 18, .next_char = 'f'},
-    {.next_ngram = 11, .next_choice = &keysmash_ngram1_choices[4], .cumulative_probability = 21, .next_char = 'l'},
-    {.next_ngram = 16, .next_choice = &keysmash_ngram1_choices[5], .cumulative_probability = 24, .next_char = 'u'},
-    {.next_ngram = 6, .next_choice = &keysmash_ngram1_choices[6], .cumulative_probability = 26, .next_char = 'g'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram1_choices[7], .cumulative_probability = 28, .next_char = 'd'},
-    {.next_ngram = 0, .next_choice = &keysmash_ngram1_choices[8], .cumulative_probability = 29, .next_char = ';'},
-    {.next_ngram = 14, .next_choice = NULL, .cumulative_probability = 30, .next_char = 'r'}
+    {.next_ngram = 7, .cumulative_probability = 7, .next_char = 'h'},
+    {.next_ngram = 9, .cumulative_probability = 13, .next_char = 'j'},
+    {.next_ngram = 5, .cumulative_probability = 18, .next_char = 'f'},
+    {.next_ngram = 11, .cumulative_probability = 21, .next_char = 'l'},
+    {.next_ngram = 16, .cumulative_probability = 24, .next_char = 'u'},
+    {.next_ngram = 6, .cumulative_probability = 26, .next_char = 'g'},
+    {.next_ngram = 3, .cumulative_probability = 28, .next_char = 'd'},
+    {.next_ngram = 0, .cumulative_probability = 29, .next_char = ';'},
+    {.next_ngram = 14, .cumulative_probability = 30, .next_char = 'r'}
 };
 static struct uwu_markov_choice keysmash_ngram2_choices[] = {
-    {.next_ngram = 10, .next_choice = &keysmash_ngram2_choices[1], .cumulative_probability = 1, .next_char = 'k'},
-    {.next_ngram = 1, .next_choice = &keysmash_ngram2_choices[2], .cumulative_probability = 2, .next_char = 'a'},
-    {.next_ngram = 7, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'h'}
+    {.next_ngram = 10, .cumulative_probability = 1, .next_char = 'k'},
+    {.next_ngram = 1, .cumulative_probability = 2, .next_char = 'a'},
+    {.next_ngram = 7, .cumulative_probability = 3, .next_char = 'h'}
 };
 static struct uwu_markov_choice keysmash_ngram3_choices[] = {
-    {.next_ngram = 5, .next_choice = &keysmash_ngram3_choices[1], .cumulative_probability = 7, .next_char = 'f'},
-    {.next_ngram = 7, .next_choice = &keysmash_ngram3_choices[2], .cumulative_probability = 12, .next_char = 'h'},
-    {.next_ngram = 15, .next_choice = &keysmash_ngram3_choices[3], .cumulative_probability = 13, .next_char = 's'},
-    {.next_ngram = 6, .next_choice = &keysmash_ngram3_choices[4], .cumulative_probability = 14, .next_char = 'g'},
-    {.next_ngram = 10, .next_choice = &keysmash_ngram3_choices[5], .cumulative_probability = 15, .next_char = 'k'},
-    {.next_ngram = 9, .next_choice = &keysmash_ngram3_choices[6], .cumulative_probability = 16, .next_char = 'j'},
-    {.next_ngram = 2, .next_choice = NULL, .cumulative_probability = 17, .next_char = 'b'}
+    {.next_ngram = 5, .cumulative_probability = 7, .next_char = 'f'},
+    {.next_ngram = 7, .cumulative_probability = 12, .next_char = 'h'},
+    {.next_ngram = 15, .cumulative_probability = 13, .next_char = 's'},
+    {.next_ngram = 6, .cumulative_probability = 14, .next_char = 'g'},
+    {.next_ngram = 10, .cumulative_probability = 15, .next_char = 'k'},
+    {.next_ngram = 9, .cumulative_probability = 16, .next_char = 'j'},
+    {.next_ngram = 2, .cumulative_probability = 17, .next_char = 'b'}
 };
 static struct uwu_markov_choice keysmash_ngram4_choices[] = {
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'g'}
+    {.next_ngram = 6, .cumulative_probability = 1, .next_char = 'g'}
 };
 static struct uwu_markov_choice keysmash_ngram5_choices[] = {
-    {.next_ngram = 6, .next_choice = &keysmash_ngram5_choices[1], .cumulative_probability = 12, .next_char = 'g'},
-    {.next_ngram = 10, .next_choice = &keysmash_ngram5_choices[2], .cumulative_probability = 16, .next_char = 'k'},
-    {.next_ngram = 9, .next_choice = &keysmash_ngram5_choices[3], .cumulative_probability = 19, .next_char = 'j'},
-    {.next_ngram = 11, .next_choice = &keysmash_ngram5_choices[4], .cumulative_probability = 21, .next_char = 'l'},
-    {.next_ngram = 7, .next_choice = &keysmash_ngram5_choices[5], .cumulative_probability = 23, .next_char = 'h'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram5_choices[6], .cumulative_probability = 25, .next_char = 'd'},
-    {.next_ngram = 1, .next_choice = NULL, .cumulative_probability = 26, .next_char = 'a'}
+    {.next_ngram = 6, .cumulative_probability = 12, .next_char = 'g'},
+    {.next_ngram = 10, .cumulative_probability = 16, .next_char = 'k'},
+    {.next_ngram = 9, .cumulative_probability = 19, .next_char = 'j'},
+    {.next_ngram = 11, .cumulative_probability = 21, .next_char = 'l'},
+    {.next_ngram = 7, .cumulative_probability = 23, .next_char = 'h'},
+    {.next_ngram = 3, .cumulative_probability = 25, .next_char = 'd'},
+    {.next_ngram = 1, .cumulative_probability = 26, .next_char = 'a'}
 };
 static struct uwu_markov_choice keysmash_ngram6_choices[] = {
-    {.next_ngram = 1, .next_choice = &keysmash_ngram6_choices[1], .cumulative_probability = 8, .next_char = 'a'},
-    {.next_ngram = 7, .next_choice = &keysmash_ngram6_choices[2], .cumulative_probability = 14, .next_char = 'h'},
-    {.next_ngram = 0, .next_choice = &keysmash_ngram6_choices[3], .cumulative_probability = 18, .next_char = ';'},
-    {.next_ngram = 9, .next_choice = &keysmash_ngram6_choices[4], .cumulative_probability = 22, .next_char = 'j'},
-    {.next_ngram = 11, .next_choice = &keysmash_ngram6_choices[5], .cumulative_probability = 25, .next_char = 'l'},
-    {.next_ngram = 2, .next_choice = &keysmash_ngram6_choices[6], .cumulative_probability = 27, .next_char = 'b'},
-    {.next_ngram = 5, .next_choice = &keysmash_ngram6_choices[7], .cumulative_probability = 29, .next_char = 'f'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram6_choices[8], .cumulative_probability = 30, .next_char = 'd'},
-    {.next_ngram = 15, .next_choice = &keysmash_ngram6_choices[9], .cumulative_probability = 31, .next_char = 's'},
-    {.next_ngram = 10, .next_choice = &keysmash_ngram6_choices[10], .cumulative_probability = 32, .next_char = 'k'},
-    {.next_ngram = 16, .next_choice = &keysmash_ngram6_choices[11], .cumulative_probability = 33, .next_char = 'u'},
-    {.next_ngram = 12, .next_choice = NULL, .cumulative_probability = 34, .next_char = 'n'}
+    {.next_ngram = 1, .cumulative_probability = 8, .next_char = 'a'},
+    {.next_ngram = 7, .cumulative_probability = 14, .next_char = 'h'},
+    {.next_ngram = 0, .cumulative_probability = 18, .next_char = ';'},
+    {.next_ngram = 9, .cumulative_probability = 22, .next_char = 'j'},
+    {.next_ngram = 11, .cumulative_probability = 25, .next_char = 'l'},
+    {.next_ngram = 2, .cumulative_probability = 27, .next_char = 'b'},
+    {.next_ngram = 5, .cumulative_probability = 29, .next_char = 'f'},
+    {.next_ngram = 3, .cumulative_probability = 30, .next_char = 'd'},
+    {.next_ngram = 15, .cumulative_probability = 31, .next_char = 's'},
+    {.next_ngram = 10, .cumulative_probability = 32, .next_char = 'k'},
+    {.next_ngram = 16, .cumulative_probability = 33, .next_char = 'u'},
+    {.next_ngram = 12, .cumulative_probability = 34, .next_char = 'n'}
 };
 static struct uwu_markov_choice keysmash_ngram7_choices[] = {
-    {.next_ngram = 6, .next_choice = &keysmash_ngram7_choices[1], .cumulative_probability = 7, .next_char = 'g'},
-    {.next_ngram = 9, .next_choice = &keysmash_ngram7_choices[2], .cumulative_probability = 11, .next_char = 'j'},
-    {.next_ngram = 5, .next_choice = &keysmash_ngram7_choices[3], .cumulative_probability = 14, .next_char = 'f'},
-    {.next_ngram = 10, .next_choice = &keysmash_ngram7_choices[4], .cumulative_probability = 17, .next_char = 'k'},
-    {.next_ngram = 1, .next_choice = &keysmash_ngram7_choices[5], .cumulative_probability = 20, .next_char = 'a'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram7_choices[6], .cumulative_probability = 23, .next_char = 'd'},
-    {.next_ngram = 8, .next_choice = &keysmash_ngram7_choices[7], .cumulative_probability = 25, .next_char = 'i'},
-    {.next_ngram = 14, .next_choice = &keysmash_ngram7_choices[8], .cumulative_probability = 27, .next_char = 'r'},
-    {.next_ngram = 0, .next_choice = &keysmash_ngram7_choices[9], .cumulative_probability = 28, .next_char = ';'},
-    {.next_ngram = 12, .next_choice = &keysmash_ngram7_choices[10], .cumulative_probability = 29, .next_char = 'n'},
-    {.next_ngram = 7, .next_choice = &keysmash_ngram7_choices[11], .cumulative_probability = 30, .next_char = 'h'},
-    {.next_ngram = 16, .next_choice = NULL, .cumulative_probability = 31, .next_char = 'u'}
+    {.next_ngram = 6, .cumulative_probability = 7, .next_char = 'g'},
+    {.next_ngram = 9, .cumulative_probability = 11, .next_char = 'j'},
+    {.next_ngram = 5, .cumulative_probability = 14, .next_char = 'f'},
+    {.next_ngram = 10, .cumulative_probability = 17, .next_char = 'k'},
+    {.next_ngram = 1, .cumulative_probability = 20, .next_char = 'a'},
+    {.next_ngram = 3, .cumulative_probability = 23, .next_char = 'd'},
+    {.next_ngram = 8, .cumulative_probability = 25, .next_char = 'i'},
+    {.next_ngram = 14, .cumulative_probability = 27, .next_char = 'r'},
+    {.next_ngram = 0, .cumulative_probability = 28, .next_char = ';'},
+    {.next_ngram = 12, .cumulative_probability = 29, .next_char = 'n'},
+    {.next_ngram = 7, .cumulative_probability = 30, .next_char = 'h'},
+    {.next_ngram = 16, .cumulative_probability = 31, .next_char = 'u'}
 };
 static struct uwu_markov_choice keysmash_ngram8_choices[] = {
-    {.next_ngram = 16, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'u'}
+    {.next_ngram = 16, .cumulative_probability = 1, .next_char = 'u'}
 };
 static struct uwu_markov_choice keysmash_ngram9_choices[] = {
-    {.next_ngram = 7, .next_choice = &keysmash_ngram9_choices[1], .cumulative_probability = 5, .next_char = 'h'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram9_choices[2], .cumulative_probability = 9, .next_char = 'd'},
-    {.next_ngram = 10, .next_choice = &keysmash_ngram9_choices[3], .cumulative_probability = 12, .next_char = 'k'},
-    {.next_ngram = 5, .next_choice = &keysmash_ngram9_choices[4], .cumulative_probability = 15, .next_char = 'f'},
-    {.next_ngram = 1, .next_choice = &keysmash_ngram9_choices[5], .cumulative_probability = 17, .next_char = 'a'},
-    {.next_ngram = 14, .next_choice = &keysmash_ngram9_choices[6], .cumulative_probability = 18, .next_char = 'r'},
-    {.next_ngram = 4, .next_choice = &keysmash_ngram9_choices[7], .cumulative_probability = 19, .next_char = 'e'},
-    {.next_ngram = 13, .next_choice = &keysmash_ngram9_choices[8], .cumulative_probability = 20, .next_char = 'o'},
-    {.next_ngram = 11, .next_choice = &keysmash_ngram9_choices[9], .cumulative_probability = 21, .next_char = 'l'},
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 22, .next_char = 'g'}
+    {.next_ngram = 7, .cumulative_probability = 5, .next_char = 'h'},
+    {.next_ngram = 3, .cumulative_probability = 9, .next_char = 'd'},
+    {.next_ngram = 10, .cumulative_probability = 12, .next_char = 'k'},
+    {.next_ngram = 5, .cumulative_probability = 15, .next_char = 'f'},
+    {.next_ngram = 1, .cumulative_probability = 17, .next_char = 'a'},
+    {.next_ngram = 14, .cumulative_probability = 18, .next_char = 'r'},
+    {.next_ngram = 4, .cumulative_probability = 19, .next_char = 'e'},
+    {.next_ngram = 13, .cumulative_probability = 20, .next_char = 'o'},
+    {.next_ngram = 11, .cumulative_probability = 21, .next_char = 'l'},
+    {.next_ngram = 6, .cumulative_probability = 22, .next_char = 'g'}
 };
 static struct uwu_markov_choice keysmash_ngram10_choices[] = {
-    {.next_ngram = 1, .next_choice = &keysmash_ngram10_choices[1], .cumulative_probability = 6, .next_char = 'a'},
-    {.next_ngram = 5, .next_choice = &keysmash_ngram10_choices[2], .cumulative_probability = 10, .next_char = 'f'},
-    {.next_ngram = 6, .next_choice = &keysmash_ngram10_choices[3], .cumulative_probability = 13, .next_char = 'g'},
-    {.next_ngram = 9, .next_choice = &keysmash_ngram10_choices[4], .cumulative_probability = 16, .next_char = 'j'},
-    {.next_ngram = 15, .next_choice = &keysmash_ngram10_choices[5], .cumulative_probability = 17, .next_char = 's'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram10_choices[6], .cumulative_probability = 18, .next_char = 'd'},
-    {.next_ngram = 11, .next_choice = &keysmash_ngram10_choices[7], .cumulative_probability = 19, .next_char = 'l'},
-    {.next_ngram = 7, .next_choice = NULL, .cumulative_probability = 20, .next_char = 'h'}
+    {.next_ngram = 1, .cumulative_probability = 6, .next_char = 'a'},
+    {.next_ngram = 5, .cumulative_probability = 10, .next_char = 'f'},
+    {.next_ngram = 6, .cumulative_probability = 13, .next_char = 'g'},
+    {.next_ngram = 9, .cumulative_probability = 16, .next_char = 'j'},
+    {.next_ngram = 15, .cumulative_probability = 17, .next_char = 's'},
+    {.next_ngram = 3, .cumulative_probability = 18, .next_char = 'd'},
+    {.next_ngram = 11, .cumulative_probability = 19, .next_char = 'l'},
+    {.next_ngram = 7, .cumulative_probability = 20, .next_char = 'h'}
 };
 static struct uwu_markov_choice keysmash_ngram11_choices[] = {
-    {.next_ngram = 10, .next_choice = &keysmash_ngram11_choices[1], .cumulative_probability = 4, .next_char = 'k'},
-    {.next_ngram = 0, .next_choice = &keysmash_ngram11_choices[2], .cumulative_probability = 6, .next_char = ';'},
-    {.next_ngram = 15, .next_choice = &keysmash_ngram11_choices[3], .cumulative_probability = 7, .next_char = 's'},
-    {.next_ngram = 6, .next_choice = &keysmash_ngram11_choices[4], .cumulative_probability = 8, .next_char = 'g'},
-    {.next_ngram = 5, .next_choice = &keysmash_ngram11_choices[5], .cumulative_probability = 9, .next_char = 'f'},
-    {.next_ngram = 3, .next_choice = &keysmash_ngram11_choices[6], .cumulative_probability = 10, .next_char = 'd'},
-    {.next_ngram = 1, .next_choice = NULL, .cumulative_probability = 11, .next_char = 'a'}
+    {.next_ngram = 10, .cumulative_probability = 4, .next_char = 'k'},
+    {.next_ngram = 0, .cumulative_probability = 6, .next_char = ';'},
+    {.next_ngram = 15, .cumulative_probability = 7, .next_char = 's'},
+    {.next_ngram = 6, .cumulative_probability = 8, .next_char = 'g'},
+    {.next_ngram = 5, .cumulative_probability = 9, .next_char = 'f'},
+    {.next_ngram = 3, .cumulative_probability = 10, .next_char = 'd'},
+    {.next_ngram = 1, .cumulative_probability = 11, .next_char = 'a'}
 };
 static struct uwu_markov_choice keysmash_ngram12_choices[] = {
-    {.next_ngram = 6, .next_choice = &keysmash_ngram12_choices[1], .cumulative_probability = 1, .next_char = 'g'},
-    {.next_ngram = 7, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'h'}
+    {.next_ngram = 6, .cumulative_probability = 1, .next_char = 'g'},
+    {.next_ngram = 7, .cumulative_probability = 2, .next_char = 'h'}
 };
 static struct uwu_markov_choice keysmash_ngram13_choices[] = {
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'g'}
+    {.next_ngram = 6, .cumulative_probability = 1, .next_char = 'g'}
 };
 static struct uwu_markov_choice keysmash_ngram14_choices[] = {
-    {.next_ngram = 6, .next_choice = &keysmash_ngram14_choices[1], .cumulative_probability = 4, .next_char = 'g'},
-    {.next_ngram = 1, .next_choice = &keysmash_ngram14_choices[2], .cumulative_probability = 6, .next_char = 'a'},
-    {.next_ngram = 7, .next_choice = NULL, .cumulative_probability = 7, .next_char = 'h'}
+    {.next_ngram = 6, .cumulative_probability = 4, .next_char = 'g'},
+    {.next_ngram = 1, .cumulative_probability = 6, .next_char = 'a'},
+    {.next_ngram = 7, .cumulative_probability = 7, .next_char = 'h'}
 };
 static struct uwu_markov_choice keysmash_ngram15_choices[] = {
-    {.next_ngram = 3, .next_choice = &keysmash_ngram15_choices[1], .cumulative_probability = 1, .next_char = 'd'},
-    {.next_ngram = 10, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'k'}
+    {.next_ngram = 3, .cumulative_probability = 1, .next_char = 'd'},
+    {.next_ngram = 10, .cumulative_probability = 2, .next_char = 'k'}
 };
 static struct uwu_markov_choice keysmash_ngram16_choices[] = {
-    {.next_ngram = 14, .next_choice = &keysmash_ngram16_choices[1], .cumulative_probability = 3, .next_char = 'r'},
-    {.next_ngram = 1, .next_choice = &keysmash_ngram16_choices[2], .cumulative_probability = 4, .next_char = 'a'},
-    {.next_ngram = 5, .next_choice = &keysmash_ngram16_choices[3], .cumulative_probability = 5, .next_char = 'f'},
-    {.next_ngram = 9, .next_choice = &keysmash_ngram16_choices[4], .cumulative_probability = 6, .next_char = 'j'},
-    {.next_ngram = 4, .next_choice = NULL, .cumulative_probability = 7, .next_char = 'e'}
+    {.next_ngram = 14, .cumulative_probability = 3, .next_char = 'r'},
+    {.next_ngram = 1, .cumulative_probability = 4, .next_char = 'a'},
+    {.next_ngram = 5, .cumulative_probability = 5, .next_char = 'f'},
+    {.next_ngram = 9, .cumulative_probability = 6, .next_char = 'j'},
+    {.next_ngram = 4, .cumulative_probability = 7, .next_char = 'e'}
 };
 
 static uwu_markov_ngram keysmash_ngrams[] = {
@@ -383,723 +382,723 @@ static uwu_markov_ngram keysmash_ngrams[] = {
     {.choices = keysmash_ngram16_choices, .total_probability = 7} // u
 };
 static struct uwu_markov_choice scrunkly_ngram0_choices[] = {
-    {.next_ngram = 34, .next_choice = &scrunkly_ngram0_choices[1], .cumulative_probability = 500, .next_char = 'n'},
-    {.next_ngram = 37, .next_choice = &scrunkly_ngram0_choices[2], .cumulative_probability = 867, .next_char = 'w'},
-    {.next_ngram = 31, .next_choice = NULL, .cumulative_probability = 1067, .next_char = 'd'}
+    {.next_ngram = 34, .cumulative_probability = 500, .next_char = 'n'},
+    {.next_ngram = 37, .cumulative_probability = 867, .next_char = 'w'},
+    {.next_ngram = 31, .cumulative_probability = 1067, .next_char = 'd'}
 };
 static struct uwu_markov_choice scrunkly_ngram1_choices[] = {
-    {.next_ngram = 43, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 43, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram2_choices[] = {
-    {.next_ngram = 46, .next_choice = &scrunkly_ngram2_choices[1], .cumulative_probability = 60, .next_char = 'u'},
-    {.next_ngram = 45, .next_choice = &scrunkly_ngram2_choices[2], .cumulative_probability = 107, .next_char = 'r'},
-    {.next_ngram = 44, .next_choice = NULL, .cumulative_probability = 147, .next_char = 'a'}
+    {.next_ngram = 46, .cumulative_probability = 60, .next_char = 'u'},
+    {.next_ngram = 45, .cumulative_probability = 107, .next_char = 'r'},
+    {.next_ngram = 44, .cumulative_probability = 147, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram3_choices[] = {
-    {.next_ngram = 51, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 51, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram4_choices[] = {
-    {.next_ngram = 61, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'l'}
+    {.next_ngram = 61, .cumulative_probability = 1, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram5_choices[] = {
-    {.next_ngram = 64, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 64, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram6_choices[] = {
-    {.next_ngram = 77, .next_choice = &scrunkly_ngram6_choices[1], .cumulative_probability = 200, .next_char = 't'},
-    {.next_ngram = 70, .next_choice = &scrunkly_ngram6_choices[2], .cumulative_probability = 300, .next_char = 'c'},
-    {.next_ngram = 68, .next_choice = &scrunkly_ngram6_choices[3], .cumulative_probability = 325, .next_char = ','},
-    {.next_ngram = 67, .next_choice = &scrunkly_ngram6_choices[4], .cumulative_probability = 349, .next_char = '!'},
-    {.next_ngram = 69, .next_choice = NULL, .cumulative_probability = 364, .next_char = '.'}
+    {.next_ngram = 77, .cumulative_probability = 200, .next_char = 't'},
+    {.next_ngram = 70, .cumulative_probability = 300, .next_char = 'c'},
+    {.next_ngram = 68, .cumulative_probability = 325, .next_char = ','},
+    {.next_ngram = 67, .cumulative_probability = 349, .next_char = '!'},
+    {.next_ngram = 69, .cumulative_probability = 364, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram7_choices[] = {
-    {.next_ngram = 81, .next_choice = &scrunkly_ngram7_choices[1], .cumulative_probability = 2, .next_char = 'i'},
-    {.next_ngram = 79, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'd'}
+    {.next_ngram = 81, .cumulative_probability = 2, .next_char = 'i'},
+    {.next_ngram = 79, .cumulative_probability = 3, .next_char = 'd'}
 };
 static struct uwu_markov_choice scrunkly_ngram8_choices[] = {
-    {.next_ngram = 88, .next_choice = &scrunkly_ngram8_choices[1], .cumulative_probability = 4, .next_char = 'i'},
-    {.next_ngram = 89, .next_choice = NULL, .cumulative_probability = 5, .next_char = 'o'}
+    {.next_ngram = 88, .cumulative_probability = 4, .next_char = 'i'},
+    {.next_ngram = 89, .cumulative_probability = 5, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram9_choices[] = {
-    {.next_ngram = 95, .next_choice = &scrunkly_ngram9_choices[1], .cumulative_probability = 1, .next_char = 'i'},
-    {.next_ngram = 94, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'e'}
+    {.next_ngram = 95, .cumulative_probability = 1, .next_char = 'i'},
+    {.next_ngram = 94, .cumulative_probability = 2, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram10_choices[] = {
-    {.next_ngram = 107, .next_choice = &scrunkly_ngram10_choices[1], .cumulative_probability = 50, .next_char = 'o'},
-    {.next_ngram = 98, .next_choice = NULL, .cumulative_probability = 81, .next_char = ' '}
+    {.next_ngram = 107, .cumulative_probability = 50, .next_char = 'o'},
+    {.next_ngram = 98, .cumulative_probability = 81, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram11_choices[] = {
-    {.next_ngram = 135, .next_choice = &scrunkly_ngram11_choices[1], .cumulative_probability = 535, .next_char = 'c'},
-    {.next_ngram = 140, .next_choice = &scrunkly_ngram11_choices[2], .cumulative_probability = 835, .next_char = 'p'},
-    {.next_ngram = 139, .next_choice = &scrunkly_ngram11_choices[3], .cumulative_probability = 1100, .next_char = 'o'},
-    {.next_ngram = 138, .next_choice = &scrunkly_ngram11_choices[4], .cumulative_probability = 1200, .next_char = 'm'},
-    {.next_ngram = 136, .next_choice = NULL, .cumulative_probability = 1271, .next_char = 'h'}
+    {.next_ngram = 135, .cumulative_probability = 535, .next_char = 'c'},
+    {.next_ngram = 140, .cumulative_probability = 835, .next_char = 'p'},
+    {.next_ngram = 139, .cumulative_probability = 1100, .next_char = 'o'},
+    {.next_ngram = 138, .cumulative_probability = 1200, .next_char = 'm'},
+    {.next_ngram = 136, .cumulative_probability = 1271, .next_char = 'h'}
 };
 static struct uwu_markov_choice scrunkly_ngram12_choices[] = {
-    {.next_ngram = 149, .next_choice = &scrunkly_ngram12_choices[1], .cumulative_probability = 262, .next_char = 'h'},
-    {.next_ngram = 152, .next_choice = &scrunkly_ngram12_choices[2], .cumulative_probability = 362, .next_char = 'o'},
-    {.next_ngram = 150, .next_choice = &scrunkly_ngram12_choices[3], .cumulative_probability = 453, .next_char = 'i'},
-    {.next_ngram = 147, .next_choice = NULL, .cumulative_probability = 478, .next_char = 'a'}
+    {.next_ngram = 149, .cumulative_probability = 262, .next_char = 'h'},
+    {.next_ngram = 152, .cumulative_probability = 362, .next_char = 'o'},
+    {.next_ngram = 150, .cumulative_probability = 453, .next_char = 'i'},
+    {.next_ngram = 147, .cumulative_probability = 478, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram13_choices[] = {
-    {.next_ngram = 165, .next_choice = &scrunkly_ngram13_choices[1], .cumulative_probability = 11, .next_char = 'h'},
-    {.next_ngram = 166, .next_choice = NULL, .cumulative_probability = 19, .next_char = 'i'}
+    {.next_ngram = 165, .cumulative_probability = 11, .next_char = 'h'},
+    {.next_ngram = 166, .cumulative_probability = 19, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram14_choices[] = {
-    {.next_ngram = 173, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 173, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram15_choices[] = {
-    {.next_ngram = 12, .next_choice = &scrunkly_ngram15_choices[1], .cumulative_probability = 190, .next_char = 't'},
-    {.next_ngram = 0, .next_choice = &scrunkly_ngram15_choices[2], .cumulative_probability = 326, .next_char = 'a'},
-    {.next_ngram = 11, .next_choice = &scrunkly_ngram15_choices[3], .cumulative_probability = 454, .next_char = 's'},
-    {.next_ngram = 8, .next_choice = &scrunkly_ngram15_choices[4], .cumulative_probability = 572, .next_char = 'l'},
-    {.next_ngram = 2, .next_choice = &scrunkly_ngram15_choices[5], .cumulative_probability = 646, .next_char = 'c'},
-    {.next_ngram = 14, .next_choice = &scrunkly_ngram15_choices[6], .cumulative_probability = 684, .next_char = 'y'},
-    {.next_ngram = 5, .next_choice = &scrunkly_ngram15_choices[7], .cumulative_probability = 722, .next_char = 'h'},
-    {.next_ngram = 13, .next_choice = &scrunkly_ngram15_choices[8], .cumulative_probability = 757, .next_char = 'w'},
-    {.next_ngram = 1, .next_choice = &scrunkly_ngram15_choices[9], .cumulative_probability = 790, .next_char = 'b'},
-    {.next_ngram = 10, .next_choice = &scrunkly_ngram15_choices[10], .cumulative_probability = 821, .next_char = 'n'},
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 849, .next_char = 'i'}
+    {.next_ngram = 12, .cumulative_probability = 190, .next_char = 't'},
+    {.next_ngram = 0, .cumulative_probability = 326, .next_char = 'a'},
+    {.next_ngram = 11, .cumulative_probability = 454, .next_char = 's'},
+    {.next_ngram = 8, .cumulative_probability = 572, .next_char = 'l'},
+    {.next_ngram = 2, .cumulative_probability = 646, .next_char = 'c'},
+    {.next_ngram = 14, .cumulative_probability = 684, .next_char = 'y'},
+    {.next_ngram = 5, .cumulative_probability = 722, .next_char = 'h'},
+    {.next_ngram = 13, .cumulative_probability = 757, .next_char = 'w'},
+    {.next_ngram = 1, .cumulative_probability = 790, .next_char = 'b'},
+    {.next_ngram = 10, .cumulative_probability = 821, .next_char = 'n'},
+    {.next_ngram = 6, .cumulative_probability = 849, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram16_choices[] = {
-    {.next_ngram = 15, .next_choice = &scrunkly_ngram16_choices[1], .cumulative_probability = 31, .next_char = ' '},
-    {.next_ngram = 16, .next_choice = NULL, .cumulative_probability = 60, .next_char = '!'}
+    {.next_ngram = 15, .cumulative_probability = 31, .next_char = ' '},
+    {.next_ngram = 16, .cumulative_probability = 60, .next_char = '!'}
 };
 static struct uwu_markov_choice scrunkly_ngram17_choices[] = {
-    {.next_ngram = 17, .next_choice = &scrunkly_ngram17_choices[1], .cumulative_probability = 777, .next_char = ','},
-    {.next_ngram = 26, .next_choice = &scrunkly_ngram17_choices[2], .cumulative_probability = 965, .next_char = 't'},
-    {.next_ngram = 18, .next_choice = &scrunkly_ngram17_choices[3], .cumulative_probability = 1098, .next_char = 'a'},
-    {.next_ngram = 25, .next_choice = &scrunkly_ngram17_choices[4], .cumulative_probability = 1227, .next_char = 's'},
-    {.next_ngram = 23, .next_choice = &scrunkly_ngram17_choices[5], .cumulative_probability = 1322, .next_char = 'l'},
-    {.next_ngram = 20, .next_choice = &scrunkly_ngram17_choices[6], .cumulative_probability = 1387, .next_char = 'c'},
-    {.next_ngram = 24, .next_choice = &scrunkly_ngram17_choices[7], .cumulative_probability = 1425, .next_char = 'n'},
-    {.next_ngram = 28, .next_choice = &scrunkly_ngram17_choices[8], .cumulative_probability = 1462, .next_char = 'y'},
-    {.next_ngram = 22, .next_choice = &scrunkly_ngram17_choices[9], .cumulative_probability = 1498, .next_char = 'i'},
-    {.next_ngram = 19, .next_choice = &scrunkly_ngram17_choices[10], .cumulative_probability = 1531, .next_char = 'b'},
-    {.next_ngram = 21, .next_choice = &scrunkly_ngram17_choices[11], .cumulative_probability = 1560, .next_char = 'h'},
-    {.next_ngram = 27, .next_choice = NULL, .cumulative_probability = 1585, .next_char = 'w'}
+    {.next_ngram = 17, .cumulative_probability = 777, .next_char = ','},
+    {.next_ngram = 26, .cumulative_probability = 965, .next_char = 't'},
+    {.next_ngram = 18, .cumulative_probability = 1098, .next_char = 'a'},
+    {.next_ngram = 25, .cumulative_probability = 1227, .next_char = 's'},
+    {.next_ngram = 23, .cumulative_probability = 1322, .next_char = 'l'},
+    {.next_ngram = 20, .cumulative_probability = 1387, .next_char = 'c'},
+    {.next_ngram = 24, .cumulative_probability = 1425, .next_char = 'n'},
+    {.next_ngram = 28, .cumulative_probability = 1462, .next_char = 'y'},
+    {.next_ngram = 22, .cumulative_probability = 1498, .next_char = 'i'},
+    {.next_ngram = 19, .cumulative_probability = 1531, .next_char = 'b'},
+    {.next_ngram = 21, .cumulative_probability = 1560, .next_char = 'h'},
+    {.next_ngram = 27, .cumulative_probability = 1585, .next_char = 'w'}
 };
 static struct uwu_markov_choice scrunkly_ngram18_choices[] = {
-    {.next_ngram = 37, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'w'}
+    {.next_ngram = 37, .cumulative_probability = 1, .next_char = 'w'}
 };
 static struct uwu_markov_choice scrunkly_ngram19_choices[] = {
-    {.next_ngram = 43, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 43, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram20_choices[] = {
-    {.next_ngram = 45, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'r'}
+    {.next_ngram = 45, .cumulative_probability = 1, .next_char = 'r'}
 };
 static struct uwu_markov_choice scrunkly_ngram21_choices[] = {
-    {.next_ngram = 64, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 64, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram22_choices[] = {
-    {.next_ngram = 67, .next_choice = &scrunkly_ngram22_choices[1], .cumulative_probability = 7, .next_char = '!'},
-    {.next_ngram = 68, .next_choice = &scrunkly_ngram22_choices[2], .cumulative_probability = 13, .next_char = ','},
-    {.next_ngram = 69, .next_choice = NULL, .cumulative_probability = 18, .next_char = '.'}
+    {.next_ngram = 67, .cumulative_probability = 7, .next_char = '!'},
+    {.next_ngram = 68, .cumulative_probability = 13, .next_char = ','},
+    {.next_ngram = 69, .cumulative_probability = 18, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram23_choices[] = {
-    {.next_ngram = 89, .next_choice = &scrunkly_ngram23_choices[1], .cumulative_probability = 59, .next_char = 'o'},
-    {.next_ngram = 88, .next_choice = NULL, .cumulative_probability = 95, .next_char = 'i'}
+    {.next_ngram = 89, .cumulative_probability = 59, .next_char = 'o'},
+    {.next_ngram = 88, .cumulative_probability = 95, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram24_choices[] = {
-    {.next_ngram = 98, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 98, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram25_choices[] = {
-    {.next_ngram = 135, .next_choice = &scrunkly_ngram25_choices[1], .cumulative_probability = 65, .next_char = 'c'},
-    {.next_ngram = 139, .next_choice = &scrunkly_ngram25_choices[2], .cumulative_probability = 100, .next_char = 'o'},
-    {.next_ngram = 136, .next_choice = NULL, .cumulative_probability = 129, .next_char = 'h'}
+    {.next_ngram = 135, .cumulative_probability = 65, .next_char = 'c'},
+    {.next_ngram = 139, .cumulative_probability = 100, .next_char = 'o'},
+    {.next_ngram = 136, .cumulative_probability = 129, .next_char = 'h'}
 };
 static struct uwu_markov_choice scrunkly_ngram26_choices[] = {
-    {.next_ngram = 149, .next_choice = &scrunkly_ngram26_choices[1], .cumulative_probability = 38, .next_char = 'h'},
-    {.next_ngram = 150, .next_choice = NULL, .cumulative_probability = 47, .next_char = 'i'}
+    {.next_ngram = 149, .cumulative_probability = 38, .next_char = 'h'},
+    {.next_ngram = 150, .cumulative_probability = 47, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram27_choices[] = {
-    {.next_ngram = 165, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'h'}
+    {.next_ngram = 165, .cumulative_probability = 1, .next_char = 'h'}
 };
 static struct uwu_markov_choice scrunkly_ngram28_choices[] = {
-    {.next_ngram = 173, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 173, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram29_choices[] = {
-    {.next_ngram = 12, .next_choice = &scrunkly_ngram29_choices[1], .cumulative_probability = 222, .next_char = 't'},
-    {.next_ngram = 11, .next_choice = &scrunkly_ngram29_choices[2], .cumulative_probability = 365, .next_char = 's'},
-    {.next_ngram = 0, .next_choice = &scrunkly_ngram29_choices[3], .cumulative_probability = 496, .next_char = 'a'},
-    {.next_ngram = 8, .next_choice = &scrunkly_ngram29_choices[4], .cumulative_probability = 583, .next_char = 'l'},
-    {.next_ngram = 2, .next_choice = &scrunkly_ngram29_choices[5], .cumulative_probability = 644, .next_char = 'c'},
-    {.next_ngram = 13, .next_choice = &scrunkly_ngram29_choices[6], .cumulative_probability = 684, .next_char = 'w'},
-    {.next_ngram = 6, .next_choice = &scrunkly_ngram29_choices[7], .cumulative_probability = 720, .next_char = 'i'},
-    {.next_ngram = 1, .next_choice = &scrunkly_ngram29_choices[8], .cumulative_probability = 754, .next_char = 'b'},
-    {.next_ngram = 5, .next_choice = &scrunkly_ngram29_choices[9], .cumulative_probability = 787, .next_char = 'h'},
-    {.next_ngram = 10, .next_choice = &scrunkly_ngram29_choices[10], .cumulative_probability = 818, .next_char = 'n'},
-    {.next_ngram = 14, .next_choice = NULL, .cumulative_probability = 843, .next_char = 'y'}
+    {.next_ngram = 12, .cumulative_probability = 222, .next_char = 't'},
+    {.next_ngram = 11, .cumulative_probability = 365, .next_char = 's'},
+    {.next_ngram = 0, .cumulative_probability = 496, .next_char = 'a'},
+    {.next_ngram = 8, .cumulative_probability = 583, .next_char = 'l'},
+    {.next_ngram = 2, .cumulative_probability = 644, .next_char = 'c'},
+    {.next_ngram = 13, .cumulative_probability = 684, .next_char = 'w'},
+    {.next_ngram = 6, .cumulative_probability = 720, .next_char = 'i'},
+    {.next_ngram = 1, .cumulative_probability = 754, .next_char = 'b'},
+    {.next_ngram = 5, .cumulative_probability = 787, .next_char = 'h'},
+    {.next_ngram = 10, .cumulative_probability = 818, .next_char = 'n'},
+    {.next_ngram = 14, .cumulative_probability = 843, .next_char = 'y'}
 };
 static struct uwu_markov_choice scrunkly_ngram30_choices[] = {
-    {.next_ngram = 29, .next_choice = &scrunkly_ngram30_choices[1], .cumulative_probability = 638, .next_char = ' '},
-    {.next_ngram = 30, .next_choice = NULL, .cumulative_probability = 1271, .next_char = '.'}
+    {.next_ngram = 29, .cumulative_probability = 638, .next_char = ' '},
+    {.next_ngram = 30, .cumulative_probability = 1271, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram31_choices[] = {
-    {.next_ngram = 51, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 51, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram32_choices[] = {
-    {.next_ngram = 87, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 87, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram33_choices[] = {
-    {.next_ngram = 97, .next_choice = NULL, .cumulative_probability = 1, .next_char = 't'}
+    {.next_ngram = 97, .cumulative_probability = 1, .next_char = 't'}
 };
 static struct uwu_markov_choice scrunkly_ngram34_choices[] = {
-    {.next_ngram = 103, .next_choice = &scrunkly_ngram34_choices[1], .cumulative_probability = 5, .next_char = 'd'},
-    {.next_ngram = 98, .next_choice = NULL, .cumulative_probability = 6, .next_char = ' '}
+    {.next_ngram = 103, .cumulative_probability = 5, .next_char = 'd'},
+    {.next_ngram = 98, .cumulative_probability = 6, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram35_choices[] = {
-    {.next_ngram = 122, .next_choice = &scrunkly_ngram35_choices[1], .cumulative_probability = 1, .next_char = ' '},
-    {.next_ngram = 123, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'p'}
+    {.next_ngram = 122, .cumulative_probability = 1, .next_char = ' '},
+    {.next_ngram = 123, .cumulative_probability = 2, .next_char = 'p'}
 };
 static struct uwu_markov_choice scrunkly_ngram36_choices[] = {
-    {.next_ngram = 143, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 143, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram37_choices[] = {
-    {.next_ngram = 168, .next_choice = &scrunkly_ngram37_choices[1], .cumulative_probability = 300, .next_char = 'w'},
-    {.next_ngram = 161, .next_choice = &scrunkly_ngram37_choices[2], .cumulative_probability = 400, .next_char = ' '},
-    {.next_ngram = 162, .next_choice = &scrunkly_ngram37_choices[3], .cumulative_probability = 443, .next_char = '!'},
-    {.next_ngram = 164, .next_choice = &scrunkly_ngram37_choices[4], .cumulative_probability = 473, .next_char = '.'},
-    {.next_ngram = 163, .next_choice = NULL, .cumulative_probability = 500, .next_char = ','}
+    {.next_ngram = 168, .cumulative_probability = 300, .next_char = 'w'},
+    {.next_ngram = 161, .cumulative_probability = 400, .next_char = ' '},
+    {.next_ngram = 162, .cumulative_probability = 443, .next_char = '!'},
+    {.next_ngram = 164, .cumulative_probability = 473, .next_char = '.'},
+    {.next_ngram = 163, .cumulative_probability = 500, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram38_choices[] = {
-    {.next_ngram = 170, .next_choice = &scrunkly_ngram38_choices[1], .cumulative_probability = 17, .next_char = '!'},
-    {.next_ngram = 172, .next_choice = &scrunkly_ngram38_choices[2], .cumulative_probability = 34, .next_char = '.'},
-    {.next_ngram = 171, .next_choice = NULL, .cumulative_probability = 50, .next_char = ','}
+    {.next_ngram = 170, .cumulative_probability = 17, .next_char = '!'},
+    {.next_ngram = 172, .cumulative_probability = 34, .next_char = '.'},
+    {.next_ngram = 171, .cumulative_probability = 50, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram39_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram39_choices[1], .cumulative_probability = 29, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 33, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 29, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 33, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram40_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram41_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram41_choices[1], .cumulative_probability = 7, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 9, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 7, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 9, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram42_choices[] = {
-    {.next_ngram = 89, .next_choice = &scrunkly_ngram42_choices[1], .cumulative_probability = 2, .next_char = 'o'},
-    {.next_ngram = 87, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'e'}
+    {.next_ngram = 89, .cumulative_probability = 2, .next_char = 'o'},
+    {.next_ngram = 87, .cumulative_probability = 3, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram43_choices[] = {
-    {.next_ngram = 113, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'i'}
+    {.next_ngram = 113, .cumulative_probability = 1, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram44_choices[] = {
-    {.next_ngram = 34, .next_choice = &scrunkly_ngram44_choices[1], .cumulative_probability = 1, .next_char = 'n'},
-    {.next_ngram = 33, .next_choice = &scrunkly_ngram44_choices[2], .cumulative_probability = 2, .next_char = 'm'},
-    {.next_ngram = 36, .next_choice = NULL, .cumulative_probability = 3, .next_char = 't'}
+    {.next_ngram = 34, .cumulative_probability = 1, .next_char = 'n'},
+    {.next_ngram = 33, .cumulative_probability = 2, .next_char = 'm'},
+    {.next_ngram = 36, .cumulative_probability = 3, .next_char = 't'}
 };
 static struct uwu_markov_choice scrunkly_ngram45_choices[] = {
-    {.next_ngram = 131, .next_choice = &scrunkly_ngram45_choices[1], .cumulative_probability = 5, .next_char = 'u'},
-    {.next_ngram = 128, .next_choice = NULL, .cumulative_probability = 9, .next_char = 'i'}
+    {.next_ngram = 131, .cumulative_probability = 5, .next_char = 'u'},
+    {.next_ngram = 128, .cumulative_probability = 9, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram46_choices[] = {
-    {.next_ngram = 159, .next_choice = NULL, .cumulative_probability = 1, .next_char = 't'}
+    {.next_ngram = 159, .cumulative_probability = 1, .next_char = 't'}
 };
 static struct uwu_markov_choice scrunkly_ngram47_choices[] = {
-    {.next_ngram = 2, .next_choice = &scrunkly_ngram47_choices[1], .cumulative_probability = 2, .next_char = 'c'},
-    {.next_ngram = 3, .next_choice = &scrunkly_ngram47_choices[2], .cumulative_probability = 3, .next_char = 'd'},
-    {.next_ngram = 6, .next_choice = &scrunkly_ngram47_choices[3], .cumulative_probability = 4, .next_char = 'i'},
-    {.next_ngram = 11, .next_choice = NULL, .cumulative_probability = 5, .next_char = 's'}
+    {.next_ngram = 2, .cumulative_probability = 2, .next_char = 'c'},
+    {.next_ngram = 3, .cumulative_probability = 3, .next_char = 'd'},
+    {.next_ngram = 6, .cumulative_probability = 4, .next_char = 'i'},
+    {.next_ngram = 11, .cumulative_probability = 5, .next_char = 's'}
 };
 static struct uwu_markov_choice scrunkly_ngram48_choices[] = {
-    {.next_ngram = 41, .next_choice = &scrunkly_ngram48_choices[1], .cumulative_probability = 36, .next_char = '.'},
-    {.next_ngram = 39, .next_choice = &scrunkly_ngram48_choices[2], .cumulative_probability = 69, .next_char = '!'},
-    {.next_ngram = 40, .next_choice = NULL, .cumulative_probability = 100, .next_char = ','}
+    {.next_ngram = 41, .cumulative_probability = 36, .next_char = '.'},
+    {.next_ngram = 39, .cumulative_probability = 69, .next_char = '!'},
+    {.next_ngram = 40, .cumulative_probability = 100, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram49_choices[] = {
-    {.next_ngram = 50, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'l'}
+    {.next_ngram = 50, .cumulative_probability = 1, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram50_choices[] = {
-    {.next_ngram = 87, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 87, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram51_choices[] = {
-    {.next_ngram = 118, .next_choice = &scrunkly_ngram51_choices[1], .cumulative_probability = 2, .next_char = 'r'},
-    {.next_ngram = 117, .next_choice = &scrunkly_ngram51_choices[2], .cumulative_probability = 4, .next_char = 'o'},
-    {.next_ngram = 120, .next_choice = NULL, .cumulative_probability = 5, .next_char = 'u'}
+    {.next_ngram = 118, .cumulative_probability = 2, .next_char = 'r'},
+    {.next_ngram = 117, .cumulative_probability = 4, .next_char = 'o'},
+    {.next_ngram = 120, .cumulative_probability = 5, .next_char = 'u'}
 };
 static struct uwu_markov_choice scrunkly_ngram52_choices[] = {
-    {.next_ngram = 12, .next_choice = &scrunkly_ngram52_choices[1], .cumulative_probability = 6, .next_char = 't'},
-    {.next_ngram = 11, .next_choice = &scrunkly_ngram52_choices[2], .cumulative_probability = 10, .next_char = 's'},
-    {.next_ngram = 8, .next_choice = &scrunkly_ngram52_choices[3], .cumulative_probability = 13, .next_char = 'l'},
-    {.next_ngram = 2, .next_choice = &scrunkly_ngram52_choices[4], .cumulative_probability = 16, .next_char = 'c'},
-    {.next_ngram = 0, .next_choice = &scrunkly_ngram52_choices[5], .cumulative_probability = 18, .next_char = 'a'},
-    {.next_ngram = 13, .next_choice = &scrunkly_ngram52_choices[6], .cumulative_probability = 20, .next_char = 'w'},
-    {.next_ngram = 1, .next_choice = &scrunkly_ngram52_choices[7], .cumulative_probability = 22, .next_char = 'b'},
-    {.next_ngram = 7, .next_choice = &scrunkly_ngram52_choices[8], .cumulative_probability = 24, .next_char = 'k'},
-    {.next_ngram = 9, .next_choice = NULL, .cumulative_probability = 25, .next_char = 'm'}
+    {.next_ngram = 12, .cumulative_probability = 6, .next_char = 't'},
+    {.next_ngram = 11, .cumulative_probability = 10, .next_char = 's'},
+    {.next_ngram = 8, .cumulative_probability = 13, .next_char = 'l'},
+    {.next_ngram = 2, .cumulative_probability = 16, .next_char = 'c'},
+    {.next_ngram = 0, .cumulative_probability = 18, .next_char = 'a'},
+    {.next_ngram = 13, .cumulative_probability = 20, .next_char = 'w'},
+    {.next_ngram = 1, .cumulative_probability = 22, .next_char = 'b'},
+    {.next_ngram = 7, .cumulative_probability = 24, .next_char = 'k'},
+    {.next_ngram = 9, .cumulative_probability = 25, .next_char = 'm'}
 };
 static struct uwu_markov_choice scrunkly_ngram53_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram53_choices[1], .cumulative_probability = 157, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 208, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 157, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 208, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram54_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram55_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram55_choices[1], .cumulative_probability = 80, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 101, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 80, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 101, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram56_choices[] = {
-    {.next_ngram = 92, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 92, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram57_choices[] = {
-    {.next_ngram = 108, .next_choice = &scrunkly_ngram57_choices[1], .cumulative_probability = 400, .next_char = 'p'},
-    {.next_ngram = 98, .next_choice = &scrunkly_ngram57_choices[2], .cumulative_probability = 500, .next_char = ' '},
-    {.next_ngram = 101, .next_choice = &scrunkly_ngram57_choices[3], .cumulative_probability = 536, .next_char = '.'},
-    {.next_ngram = 99, .next_choice = &scrunkly_ngram57_choices[4], .cumulative_probability = 569, .next_char = '!'},
-    {.next_ngram = 100, .next_choice = NULL, .cumulative_probability = 600, .next_char = ','}
+    {.next_ngram = 108, .cumulative_probability = 400, .next_char = 'p'},
+    {.next_ngram = 98, .cumulative_probability = 500, .next_char = ' '},
+    {.next_ngram = 101, .cumulative_probability = 536, .next_char = '.'},
+    {.next_ngram = 99, .cumulative_probability = 569, .next_char = '!'},
+    {.next_ngram = 100, .cumulative_probability = 600, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram58_choices[] = {
-    {.next_ngram = 121, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'w'}
+    {.next_ngram = 121, .cumulative_probability = 1, .next_char = 'w'}
 };
 static struct uwu_markov_choice scrunkly_ngram59_choices[] = {
-    {.next_ngram = 141, .next_choice = NULL, .cumulative_probability = 1, .next_char = 't'}
+    {.next_ngram = 141, .cumulative_probability = 1, .next_char = 't'}
 };
 static struct uwu_markov_choice scrunkly_ngram60_choices[] = {
-    {.next_ngram = 0, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 0, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram61_choices[] = {
-    {.next_ngram = 90, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'u'}
+    {.next_ngram = 90, .cumulative_probability = 1, .next_char = 'u'}
 };
 static struct uwu_markov_choice scrunkly_ngram62_choices[] = {
-    {.next_ngram = 53, .next_choice = &scrunkly_ngram62_choices[1], .cumulative_probability = 74, .next_char = '!'},
-    {.next_ngram = 54, .next_choice = &scrunkly_ngram62_choices[2], .cumulative_probability = 139, .next_char = ','},
-    {.next_ngram = 55, .next_choice = NULL, .cumulative_probability = 200, .next_char = '.'}
+    {.next_ngram = 53, .cumulative_probability = 74, .next_char = '!'},
+    {.next_ngram = 54, .cumulative_probability = 139, .next_char = ','},
+    {.next_ngram = 55, .cumulative_probability = 200, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram63_choices[] = {
-    {.next_ngram = 87, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 87, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram64_choices[] = {
-    {.next_ngram = 35, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'p'}
+    {.next_ngram = 35, .cumulative_probability = 1, .next_char = 'p'}
 };
 static struct uwu_markov_choice scrunkly_ngram65_choices[] = {
-    {.next_ngram = 52, .next_choice = &scrunkly_ngram65_choices[1], .cumulative_probability = 1200, .next_char = ' '},
-    {.next_ngram = 57, .next_choice = &scrunkly_ngram65_choices[2], .cumulative_probability = 1400, .next_char = 'n'},
-    {.next_ngram = 56, .next_choice = &scrunkly_ngram65_choices[3], .cumulative_probability = 1500, .next_char = 'm'},
-    {.next_ngram = 53, .next_choice = &scrunkly_ngram65_choices[4], .cumulative_probability = 1537, .next_char = '!'},
-    {.next_ngram = 54, .next_choice = &scrunkly_ngram65_choices[5], .cumulative_probability = 1569, .next_char = ','},
-    {.next_ngram = 55, .next_choice = NULL, .cumulative_probability = 1600, .next_char = '.'}
+    {.next_ngram = 52, .cumulative_probability = 1200, .next_char = ' '},
+    {.next_ngram = 57, .cumulative_probability = 1400, .next_char = 'n'},
+    {.next_ngram = 56, .cumulative_probability = 1500, .next_char = 'm'},
+    {.next_ngram = 53, .cumulative_probability = 1537, .next_char = '!'},
+    {.next_ngram = 54, .cumulative_probability = 1569, .next_char = ','},
+    {.next_ngram = 55, .cumulative_probability = 1600, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram66_choices[] = {
-    {.next_ngram = 130, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 130, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram67_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram67_choices[1], .cumulative_probability = 25, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 38, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 25, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 38, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram68_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram69_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram69_choices[1], .cumulative_probability = 17, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 25, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 17, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 25, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram70_choices[] = {
-    {.next_ngram = 44, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 44, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram71_choices[] = {
-    {.next_ngram = 49, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'd'}
+    {.next_ngram = 49, .cumulative_probability = 1, .next_char = 'd'}
 };
 static struct uwu_markov_choice scrunkly_ngram72_choices[] = {
-    {.next_ngram = 57, .next_choice = &scrunkly_ngram72_choices[1], .cumulative_probability = 400, .next_char = 'n'},
-    {.next_ngram = 55, .next_choice = &scrunkly_ngram72_choices[2], .cumulative_probability = 443, .next_char = '.'},
-    {.next_ngram = 54, .next_choice = &scrunkly_ngram72_choices[3], .cumulative_probability = 479, .next_char = ','},
-    {.next_ngram = 53, .next_choice = NULL, .cumulative_probability = 500, .next_char = '!'}
+    {.next_ngram = 57, .cumulative_probability = 400, .next_char = 'n'},
+    {.next_ngram = 55, .cumulative_probability = 443, .next_char = '.'},
+    {.next_ngram = 54, .cumulative_probability = 479, .next_char = ','},
+    {.next_ngram = 53, .cumulative_probability = 500, .next_char = '!'}
 };
 static struct uwu_markov_choice scrunkly_ngram73_choices[] = {
-    {.next_ngram = 80, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 80, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram74_choices[] = {
-    {.next_ngram = 93, .next_choice = &scrunkly_ngram74_choices[1], .cumulative_probability = 1, .next_char = 'b'},
-    {.next_ngram = 97, .next_choice = NULL, .cumulative_probability = 2, .next_char = 't'}
+    {.next_ngram = 93, .cumulative_probability = 1, .next_char = 'b'},
+    {.next_ngram = 97, .cumulative_probability = 2, .next_char = 't'}
 };
 static struct uwu_markov_choice scrunkly_ngram75_choices[] = {
-    {.next_ngram = 106, .next_choice = &scrunkly_ngram75_choices[1], .cumulative_probability = 6, .next_char = 'k'},
-    {.next_ngram = 105, .next_choice = NULL, .cumulative_probability = 7, .next_char = 'g'}
+    {.next_ngram = 106, .cumulative_probability = 6, .next_char = 'k'},
+    {.next_ngram = 105, .cumulative_probability = 7, .next_char = 'g'}
 };
 static struct uwu_markov_choice scrunkly_ngram76_choices[] = {
-    {.next_ngram = 127, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'y'}
+    {.next_ngram = 127, .cumulative_probability = 1, .next_char = 'y'}
 };
 static struct uwu_markov_choice scrunkly_ngram77_choices[] = {
-    {.next_ngram = 154, .next_choice = &scrunkly_ngram77_choices[1], .cumulative_probability = 300, .next_char = 't'},
-    {.next_ngram = 143, .next_choice = &scrunkly_ngram77_choices[2], .cumulative_probability = 600, .next_char = ' '},
-    {.next_ngram = 146, .next_choice = &scrunkly_ngram77_choices[3], .cumulative_probability = 706, .next_char = '.'},
-    {.next_ngram = 155, .next_choice = &scrunkly_ngram77_choices[4], .cumulative_probability = 806, .next_char = 'y'},
-    {.next_ngram = 145, .next_choice = &scrunkly_ngram77_choices[5], .cumulative_probability = 905, .next_char = ','},
-    {.next_ngram = 144, .next_choice = NULL, .cumulative_probability = 1000, .next_char = '!'}
+    {.next_ngram = 154, .cumulative_probability = 300, .next_char = 't'},
+    {.next_ngram = 143, .cumulative_probability = 600, .next_char = ' '},
+    {.next_ngram = 146, .cumulative_probability = 706, .next_char = '.'},
+    {.next_ngram = 155, .cumulative_probability = 806, .next_char = 'y'},
+    {.next_ngram = 145, .cumulative_probability = 905, .next_char = ','},
+    {.next_ngram = 144, .cumulative_probability = 1000, .next_char = '!'}
 };
 static struct uwu_markov_choice scrunkly_ngram78_choices[] = {
-    {.next_ngram = 160, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 160, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram79_choices[] = {
-    {.next_ngram = 48, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'b'}
+    {.next_ngram = 48, .cumulative_probability = 1, .next_char = 'b'}
 };
 static struct uwu_markov_choice scrunkly_ngram80_choices[] = {
-    {.next_ngram = 52, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 52, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram81_choices[] = {
-    {.next_ngram = 77, .next_choice = &scrunkly_ngram81_choices[1], .cumulative_probability = 3, .next_char = 't'},
-    {.next_ngram = 74, .next_choice = NULL, .cumulative_probability = 4, .next_char = 'm'}
+    {.next_ngram = 77, .cumulative_probability = 3, .next_char = 't'},
+    {.next_ngram = 74, .cumulative_probability = 4, .next_char = 'm'}
 };
 static struct uwu_markov_choice scrunkly_ngram82_choices[] = {
-    {.next_ngram = 91, .next_choice = &scrunkly_ngram82_choices[1], .cumulative_probability = 6, .next_char = 'y'},
-    {.next_ngram = 87, .next_choice = NULL, .cumulative_probability = 7, .next_char = 'e'}
+    {.next_ngram = 91, .cumulative_probability = 6, .next_char = 'y'},
+    {.next_ngram = 87, .cumulative_probability = 7, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram83_choices[] = {
-    {.next_ngram = 112, .next_choice = &scrunkly_ngram83_choices[1], .cumulative_probability = 39, .next_char = '.'},
-    {.next_ngram = 110, .next_choice = &scrunkly_ngram83_choices[2], .cumulative_probability = 72, .next_char = '!'},
-    {.next_ngram = 111, .next_choice = NULL, .cumulative_probability = 100, .next_char = ','}
+    {.next_ngram = 112, .cumulative_probability = 39, .next_char = '.'},
+    {.next_ngram = 110, .cumulative_probability = 72, .next_char = '!'},
+    {.next_ngram = 111, .cumulative_probability = 100, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram84_choices[] = {
-    {.next_ngram = 158, .next_choice = NULL, .cumulative_probability = 1, .next_char = 's'}
+    {.next_ngram = 158, .cumulative_probability = 1, .next_char = 's'}
 };
 static struct uwu_markov_choice scrunkly_ngram85_choices[] = {
-    {.next_ngram = 169, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 169, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram86_choices[] = {
-    {.next_ngram = 11, .next_choice = NULL, .cumulative_probability = 1, .next_char = 's'}
+    {.next_ngram = 11, .cumulative_probability = 1, .next_char = 's'}
 };
 static struct uwu_markov_choice scrunkly_ngram87_choices[] = {
-    {.next_ngram = 52, .next_choice = &scrunkly_ngram87_choices[1], .cumulative_probability = 550, .next_char = ' '},
-    {.next_ngram = 53, .next_choice = &scrunkly_ngram87_choices[2], .cumulative_probability = 569, .next_char = '!'},
-    {.next_ngram = 55, .next_choice = &scrunkly_ngram87_choices[3], .cumulative_probability = 586, .next_char = '.'},
-    {.next_ngram = 54, .next_choice = NULL, .cumulative_probability = 600, .next_char = ','}
+    {.next_ngram = 52, .cumulative_probability = 550, .next_char = ' '},
+    {.next_ngram = 53, .cumulative_probability = 569, .next_char = '!'},
+    {.next_ngram = 55, .cumulative_probability = 586, .next_char = '.'},
+    {.next_ngram = 54, .cumulative_probability = 600, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram88_choices[] = {
-    {.next_ngram = 77, .next_choice = &scrunkly_ngram88_choices[1], .cumulative_probability = 3, .next_char = 't'},
-    {.next_ngram = 73, .next_choice = &scrunkly_ngram88_choices[2], .cumulative_probability = 4, .next_char = 'k'},
-    {.next_ngram = 78, .next_choice = &scrunkly_ngram88_choices[3], .cumulative_probability = 5, .next_char = 'v'},
-    {.next_ngram = 74, .next_choice = NULL, .cumulative_probability = 6, .next_char = 'm'}
+    {.next_ngram = 77, .cumulative_probability = 3, .next_char = 't'},
+    {.next_ngram = 73, .cumulative_probability = 4, .next_char = 'k'},
+    {.next_ngram = 78, .cumulative_probability = 5, .next_char = 'v'},
+    {.next_ngram = 74, .cumulative_probability = 6, .next_char = 'm'}
 };
 static struct uwu_markov_choice scrunkly_ngram89_choices[] = {
-    {.next_ngram = 117, .next_choice = &scrunkly_ngram89_choices[1], .cumulative_probability = 100, .next_char = 'o'},
-    {.next_ngram = 109, .next_choice = &scrunkly_ngram89_choices[2], .cumulative_probability = 150, .next_char = ' '},
-    {.next_ngram = 110, .next_choice = &scrunkly_ngram89_choices[3], .cumulative_probability = 169, .next_char = '!'},
-    {.next_ngram = 111, .next_choice = &scrunkly_ngram89_choices[4], .cumulative_probability = 187, .next_char = ','},
-    {.next_ngram = 112, .next_choice = NULL, .cumulative_probability = 200, .next_char = '.'}
+    {.next_ngram = 117, .cumulative_probability = 100, .next_char = 'o'},
+    {.next_ngram = 109, .cumulative_probability = 150, .next_char = ' '},
+    {.next_ngram = 110, .cumulative_probability = 169, .next_char = '!'},
+    {.next_ngram = 111, .cumulative_probability = 187, .next_char = ','},
+    {.next_ngram = 112, .cumulative_probability = 200, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram90_choices[] = {
-    {.next_ngram = 157, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'n'}
+    {.next_ngram = 157, .cumulative_probability = 1, .next_char = 'n'}
 };
 static struct uwu_markov_choice scrunkly_ngram91_choices[] = {
-    {.next_ngram = 169, .next_choice = &scrunkly_ngram91_choices[1], .cumulative_probability = 300, .next_char = ' '},
-    {.next_ngram = 170, .next_choice = &scrunkly_ngram91_choices[2], .cumulative_probability = 373, .next_char = '!'},
-    {.next_ngram = 172, .next_choice = &scrunkly_ngram91_choices[3], .cumulative_probability = 439, .next_char = '.'},
-    {.next_ngram = 171, .next_choice = NULL, .cumulative_probability = 500, .next_char = ','}
+    {.next_ngram = 169, .cumulative_probability = 300, .next_char = ' '},
+    {.next_ngram = 170, .cumulative_probability = 373, .next_char = '!'},
+    {.next_ngram = 172, .cumulative_probability = 439, .next_char = '.'},
+    {.next_ngram = 171, .cumulative_probability = 500, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram92_choices[] = {
-    {.next_ngram = 12, .next_choice = NULL, .cumulative_probability = 1, .next_char = 't'}
+    {.next_ngram = 12, .cumulative_probability = 1, .next_char = 't'}
 };
 static struct uwu_markov_choice scrunkly_ngram93_choices[] = {
-    {.next_ngram = 42, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'l'}
+    {.next_ngram = 42, .cumulative_probability = 1, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram94_choices[] = {
-    {.next_ngram = 58, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 58, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram95_choices[] = {
-    {.next_ngram = 76, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'p'}
+    {.next_ngram = 76, .cumulative_probability = 1, .next_char = 'p'}
 };
 static struct uwu_markov_choice scrunkly_ngram96_choices[] = {
-    {.next_ngram = 115, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'l'}
+    {.next_ngram = 115, .cumulative_probability = 1, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram97_choices[] = {
-    {.next_ngram = 151, .next_choice = &scrunkly_ngram97_choices[1], .cumulative_probability = 100, .next_char = 'l'},
-    {.next_ngram = 155, .next_choice = &scrunkly_ngram97_choices[2], .cumulative_probability = 200, .next_char = 'y'},
-    {.next_ngram = 146, .next_choice = &scrunkly_ngram97_choices[3], .cumulative_probability = 238, .next_char = '.'},
-    {.next_ngram = 145, .next_choice = &scrunkly_ngram97_choices[4], .cumulative_probability = 273, .next_char = ','},
-    {.next_ngram = 144, .next_choice = NULL, .cumulative_probability = 300, .next_char = '!'}
+    {.next_ngram = 151, .cumulative_probability = 100, .next_char = 'l'},
+    {.next_ngram = 155, .cumulative_probability = 200, .next_char = 'y'},
+    {.next_ngram = 146, .cumulative_probability = 238, .next_char = '.'},
+    {.next_ngram = 145, .cumulative_probability = 273, .next_char = ','},
+    {.next_ngram = 144, .cumulative_probability = 300, .next_char = '!'}
 };
 static struct uwu_markov_choice scrunkly_ngram98_choices[] = {
-    {.next_ngram = 12, .next_choice = &scrunkly_ngram98_choices[1], .cumulative_probability = 2, .next_char = 't'},
-    {.next_ngram = 4, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'f'}
+    {.next_ngram = 12, .cumulative_probability = 2, .next_char = 't'},
+    {.next_ngram = 4, .cumulative_probability = 3, .next_char = 'f'}
 };
 static struct uwu_markov_choice scrunkly_ngram99_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram99_choices[1], .cumulative_probability = 26, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 33, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 26, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 33, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram100_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram101_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram101_choices[1], .cumulative_probability = 25, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 36, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 25, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 36, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram102_choices[] = {
-    {.next_ngram = 32, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'l'}
+    {.next_ngram = 32, .cumulative_probability = 1, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram103_choices[] = {
-    {.next_ngram = 47, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 47, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram104_choices[] = {
-    {.next_ngram = 60, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 60, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram105_choices[] = {
-    {.next_ngram = 62, .next_choice = &scrunkly_ngram105_choices[1], .cumulative_probability = 1, .next_char = 'e'},
-    {.next_ngram = 63, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'l'}
+    {.next_ngram = 62, .cumulative_probability = 1, .next_char = 'e'},
+    {.next_ngram = 63, .cumulative_probability = 2, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram106_choices[] = {
-    {.next_ngram = 82, .next_choice = &scrunkly_ngram106_choices[1], .cumulative_probability = 7, .next_char = 'l'},
-    {.next_ngram = 85, .next_choice = &scrunkly_ngram106_choices[2], .cumulative_probability = 9, .next_char = 'y'},
-    {.next_ngram = 84, .next_choice = &scrunkly_ngram106_choices[3], .cumulative_probability = 10, .next_char = 'u'},
-    {.next_ngram = 83, .next_choice = NULL, .cumulative_probability = 11, .next_char = 'o'}
+    {.next_ngram = 82, .cumulative_probability = 7, .next_char = 'l'},
+    {.next_ngram = 85, .cumulative_probability = 9, .next_char = 'y'},
+    {.next_ngram = 84, .cumulative_probability = 10, .next_char = 'u'},
+    {.next_ngram = 83, .cumulative_probability = 11, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram107_choices[] = {
-    {.next_ngram = 121, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'w'}
+    {.next_ngram = 121, .cumulative_probability = 1, .next_char = 'w'}
 };
 static struct uwu_markov_choice scrunkly_ngram108_choices[] = {
-    {.next_ngram = 125, .next_choice = NULL, .cumulative_probability = 1, .next_char = 's'}
+    {.next_ngram = 125, .cumulative_probability = 1, .next_char = 's'}
 };
 static struct uwu_markov_choice scrunkly_ngram109_choices[] = {
-    {.next_ngram = 0, .next_choice = &scrunkly_ngram109_choices[1], .cumulative_probability = 1, .next_char = 'a'},
-    {.next_ngram = 6, .next_choice = &scrunkly_ngram109_choices[2], .cumulative_probability = 2, .next_char = 'i'},
-    {.next_ngram = 8, .next_choice = &scrunkly_ngram109_choices[3], .cumulative_probability = 3, .next_char = 'l'},
-    {.next_ngram = 1, .next_choice = &scrunkly_ngram109_choices[4], .cumulative_probability = 4, .next_char = 'b'},
-    {.next_ngram = 9, .next_choice = NULL, .cumulative_probability = 5, .next_char = 'm'}
+    {.next_ngram = 0, .cumulative_probability = 1, .next_char = 'a'},
+    {.next_ngram = 6, .cumulative_probability = 2, .next_char = 'i'},
+    {.next_ngram = 8, .cumulative_probability = 3, .next_char = 'l'},
+    {.next_ngram = 1, .cumulative_probability = 4, .next_char = 'b'},
+    {.next_ngram = 9, .cumulative_probability = 5, .next_char = 'm'}
 };
 static struct uwu_markov_choice scrunkly_ngram110_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram110_choices[1], .cumulative_probability = 105, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 136, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 105, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 136, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram111_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram112_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram112_choices[1], .cumulative_probability = 104, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 141, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 104, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 141, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram113_choices[] = {
-    {.next_ngram = 75, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'n'}
+    {.next_ngram = 75, .cumulative_probability = 1, .next_char = 'n'}
 };
 static struct uwu_markov_choice scrunkly_ngram114_choices[] = {
-    {.next_ngram = 81, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'i'}
+    {.next_ngram = 81, .cumulative_probability = 1, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram115_choices[] = {
-    {.next_ngram = 86, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 86, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram116_choices[] = {
-    {.next_ngram = 106, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'k'}
+    {.next_ngram = 106, .cumulative_probability = 1, .next_char = 'k'}
 };
 static struct uwu_markov_choice scrunkly_ngram117_choices[] = {
-    {.next_ngram = 119, .next_choice = &scrunkly_ngram117_choices[1], .cumulative_probability = 300, .next_char = 't'},
-    {.next_ngram = 114, .next_choice = &scrunkly_ngram117_choices[2], .cumulative_probability = 500, .next_char = 'k'},
-    {.next_ngram = 117, .next_choice = &scrunkly_ngram117_choices[3], .cumulative_probability = 600, .next_char = 'o'},
-    {.next_ngram = 109, .next_choice = &scrunkly_ngram117_choices[4], .cumulative_probability = 700, .next_char = ' '},
-    {.next_ngram = 112, .next_choice = &scrunkly_ngram117_choices[5], .cumulative_probability = 776, .next_char = '.'},
-    {.next_ngram = 110, .next_choice = &scrunkly_ngram117_choices[6], .cumulative_probability = 841, .next_char = '!'},
-    {.next_ngram = 111, .next_choice = NULL, .cumulative_probability = 900, .next_char = ','}
+    {.next_ngram = 119, .cumulative_probability = 300, .next_char = 't'},
+    {.next_ngram = 114, .cumulative_probability = 500, .next_char = 'k'},
+    {.next_ngram = 117, .cumulative_probability = 600, .next_char = 'o'},
+    {.next_ngram = 109, .cumulative_probability = 700, .next_char = ' '},
+    {.next_ngram = 112, .cumulative_probability = 776, .next_char = '.'},
+    {.next_ngram = 110, .cumulative_probability = 841, .next_char = '!'},
+    {.next_ngram = 111, .cumulative_probability = 900, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram118_choices[] = {
-    {.next_ngram = 129, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'n'}
+    {.next_ngram = 129, .cumulative_probability = 1, .next_char = 'n'}
 };
 static struct uwu_markov_choice scrunkly_ngram119_choices[] = {
-    {.next_ngram = 153, .next_choice = NULL, .cumulative_probability = 1, .next_char = 's'}
+    {.next_ngram = 153, .cumulative_probability = 1, .next_char = 's'}
 };
 static struct uwu_markov_choice scrunkly_ngram120_choices[] = {
-    {.next_ngram = 156, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'b'}
+    {.next_ngram = 156, .cumulative_probability = 1, .next_char = 'b'}
 };
 static struct uwu_markov_choice scrunkly_ngram121_choices[] = {
-    {.next_ngram = 161, .next_choice = &scrunkly_ngram121_choices[1], .cumulative_probability = 2, .next_char = ' '},
-    {.next_ngram = 167, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'm'}
+    {.next_ngram = 161, .cumulative_probability = 2, .next_char = ' '},
+    {.next_ngram = 167, .cumulative_probability = 3, .next_char = 'm'}
 };
 static struct uwu_markov_choice scrunkly_ngram122_choices[] = {
-    {.next_ngram = 10, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'n'}
+    {.next_ngram = 10, .cumulative_probability = 1, .next_char = 'n'}
 };
 static struct uwu_markov_choice scrunkly_ngram123_choices[] = {
-    {.next_ngram = 127, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'y'}
+    {.next_ngram = 127, .cumulative_probability = 1, .next_char = 'y'}
 };
 static struct uwu_markov_choice scrunkly_ngram124_choices[] = {
-    {.next_ngram = 130, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 130, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram125_choices[] = {
-    {.next_ngram = 142, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'y'}
+    {.next_ngram = 142, .cumulative_probability = 1, .next_char = 'y'}
 };
 static struct uwu_markov_choice scrunkly_ngram126_choices[] = {
-    {.next_ngram = 157, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'n'}
+    {.next_ngram = 157, .cumulative_probability = 1, .next_char = 'n'}
 };
 static struct uwu_markov_choice scrunkly_ngram127_choices[] = {
-    {.next_ngram = 169, .next_choice = &scrunkly_ngram127_choices[1], .cumulative_probability = 100, .next_char = ' '},
-    {.next_ngram = 170, .next_choice = &scrunkly_ngram127_choices[2], .cumulative_probability = 141, .next_char = '!'},
-    {.next_ngram = 171, .next_choice = &scrunkly_ngram127_choices[3], .cumulative_probability = 177, .next_char = ','},
-    {.next_ngram = 172, .next_choice = NULL, .cumulative_probability = 200, .next_char = '.'}
+    {.next_ngram = 169, .cumulative_probability = 100, .next_char = ' '},
+    {.next_ngram = 170, .cumulative_probability = 141, .next_char = '!'},
+    {.next_ngram = 171, .cumulative_probability = 177, .next_char = ','},
+    {.next_ngram = 172, .cumulative_probability = 200, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram128_choices[] = {
-    {.next_ngram = 75, .next_choice = &scrunkly_ngram128_choices[1], .cumulative_probability = 1, .next_char = 'n'},
-    {.next_ngram = 74, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'm'}
+    {.next_ngram = 75, .cumulative_probability = 1, .next_char = 'n'},
+    {.next_ngram = 74, .cumulative_probability = 2, .next_char = 'm'}
 };
 static struct uwu_markov_choice scrunkly_ngram129_choices[] = {
-    {.next_ngram = 102, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'a'}
+    {.next_ngram = 102, .cumulative_probability = 1, .next_char = 'a'}
 };
 static struct uwu_markov_choice scrunkly_ngram130_choices[] = {
-    {.next_ngram = 116, .next_choice = &scrunkly_ngram130_choices[1], .cumulative_probability = 1, .next_char = 'n'},
-    {.next_ngram = 113, .next_choice = NULL, .cumulative_probability = 2, .next_char = 'i'}
+    {.next_ngram = 116, .cumulative_probability = 1, .next_char = 'n'},
+    {.next_ngram = 113, .cumulative_probability = 2, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram131_choices[] = {
-    {.next_ngram = 157, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'n'}
+    {.next_ngram = 157, .cumulative_probability = 1, .next_char = 'n'}
 };
 static struct uwu_markov_choice scrunkly_ngram132_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram132_choices[1], .cumulative_probability = 8, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 11, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 8, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 11, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram133_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram134_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram134_choices[1], .cumulative_probability = 13, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 17, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 13, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 17, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram135_choices[] = {
-    {.next_ngram = 45, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'r'}
+    {.next_ngram = 45, .cumulative_probability = 1, .next_char = 'r'}
 };
 static struct uwu_markov_choice scrunkly_ngram136_choices[] = {
-    {.next_ngram = 66, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'r'}
+    {.next_ngram = 66, .cumulative_probability = 1, .next_char = 'r'}
 };
 static struct uwu_markov_choice scrunkly_ngram137_choices[] = {
-    {.next_ngram = 77, .next_choice = &scrunkly_ngram137_choices[1], .cumulative_probability = 2, .next_char = 't'},
-    {.next_ngram = 72, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'e'}
+    {.next_ngram = 77, .cumulative_probability = 2, .next_char = 't'},
+    {.next_ngram = 72, .cumulative_probability = 3, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram138_choices[] = {
-    {.next_ngram = 96, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'o'}
+    {.next_ngram = 96, .cumulative_probability = 1, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram139_choices[] = {
-    {.next_ngram = 109, .next_choice = &scrunkly_ngram139_choices[1], .cumulative_probability = 2, .next_char = ' '},
-    {.next_ngram = 117, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'o'}
+    {.next_ngram = 109, .cumulative_probability = 2, .next_char = ' '},
+    {.next_ngram = 117, .cumulative_probability = 3, .next_char = 'o'}
 };
 static struct uwu_markov_choice scrunkly_ngram140_choices[] = {
-    {.next_ngram = 126, .next_choice = &scrunkly_ngram140_choices[1], .cumulative_probability = 2, .next_char = 'u'},
-    {.next_ngram = 124, .next_choice = NULL, .cumulative_probability = 3, .next_char = 'r'}
+    {.next_ngram = 126, .cumulative_probability = 2, .next_char = 'u'},
+    {.next_ngram = 124, .cumulative_probability = 3, .next_char = 'r'}
 };
 static struct uwu_markov_choice scrunkly_ngram141_choices[] = {
-    {.next_ngram = 143, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 143, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram142_choices[] = {
-    {.next_ngram = 169, .next_choice = &scrunkly_ngram142_choices[1], .cumulative_probability = 300, .next_char = ' '},
-    {.next_ngram = 172, .next_choice = &scrunkly_ngram142_choices[2], .cumulative_probability = 341, .next_char = '.'},
-    {.next_ngram = 171, .next_choice = &scrunkly_ngram142_choices[3], .cumulative_probability = 376, .next_char = ','},
-    {.next_ngram = 170, .next_choice = NULL, .cumulative_probability = 400, .next_char = '!'}
+    {.next_ngram = 169, .cumulative_probability = 300, .next_char = ' '},
+    {.next_ngram = 172, .cumulative_probability = 341, .next_char = '.'},
+    {.next_ngram = 171, .cumulative_probability = 376, .next_char = ','},
+    {.next_ngram = 170, .cumulative_probability = 400, .next_char = '!'}
 };
 static struct uwu_markov_choice scrunkly_ngram143_choices[] = {
-    {.next_ngram = 12, .next_choice = &scrunkly_ngram143_choices[1], .cumulative_probability = 2, .next_char = 't'},
-    {.next_ngram = 0, .next_choice = &scrunkly_ngram143_choices[2], .cumulative_probability = 4, .next_char = 'a'},
-    {.next_ngram = 2, .next_choice = &scrunkly_ngram143_choices[3], .cumulative_probability = 5, .next_char = 'c'},
-    {.next_ngram = 11, .next_choice = NULL, .cumulative_probability = 6, .next_char = 's'}
+    {.next_ngram = 12, .cumulative_probability = 2, .next_char = 't'},
+    {.next_ngram = 0, .cumulative_probability = 4, .next_char = 'a'},
+    {.next_ngram = 2, .cumulative_probability = 5, .next_char = 'c'},
+    {.next_ngram = 11, .cumulative_probability = 6, .next_char = 's'}
 };
 static struct uwu_markov_choice scrunkly_ngram144_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram144_choices[1], .cumulative_probability = 85, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 122, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 85, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 122, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram145_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram146_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram146_choices[1], .cumulative_probability = 101, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 144, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 101, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 144, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram147_choices[] = {
-    {.next_ngram = 35, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'p'}
+    {.next_ngram = 35, .cumulative_probability = 1, .next_char = 'p'}
 };
 static struct uwu_markov_choice scrunkly_ngram148_choices[] = {
-    {.next_ngram = 59, .next_choice = &scrunkly_ngram148_choices[1], .cumulative_probability = 200, .next_char = 's'},
-    {.next_ngram = 53, .next_choice = &scrunkly_ngram148_choices[2], .cumulative_probability = 238, .next_char = '!'},
-    {.next_ngram = 55, .next_choice = &scrunkly_ngram148_choices[3], .cumulative_probability = 271, .next_char = '.'},
-    {.next_ngram = 54, .next_choice = NULL, .cumulative_probability = 300, .next_char = ','}
+    {.next_ngram = 59, .cumulative_probability = 200, .next_char = 's'},
+    {.next_ngram = 53, .cumulative_probability = 238, .next_char = '!'},
+    {.next_ngram = 55, .cumulative_probability = 271, .next_char = '.'},
+    {.next_ngram = 54, .cumulative_probability = 300, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram149_choices[] = {
-    {.next_ngram = 65, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 65, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram150_choices[] = {
-    {.next_ngram = 72, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 72, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram151_choices[] = {
-    {.next_ngram = 87, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 87, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram152_choices[] = {
-    {.next_ngram = 117, .next_choice = &scrunkly_ngram152_choices[1], .cumulative_probability = 3, .next_char = 'o'},
-    {.next_ngram = 109, .next_choice = NULL, .cumulative_probability = 4, .next_char = ' '}
+    {.next_ngram = 117, .cumulative_probability = 3, .next_char = 'o'},
+    {.next_ngram = 109, .cumulative_probability = 4, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram153_choices[] = {
-    {.next_ngram = 137, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'i'}
+    {.next_ngram = 137, .cumulative_probability = 1, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram154_choices[] = {
-    {.next_ngram = 151, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'l'}
+    {.next_ngram = 151, .cumulative_probability = 1, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram155_choices[] = {
-    {.next_ngram = 169, .next_choice = &scrunkly_ngram155_choices[1], .cumulative_probability = 100, .next_char = ' '},
-    {.next_ngram = 171, .next_choice = &scrunkly_ngram155_choices[2], .cumulative_probability = 138, .next_char = ','},
-    {.next_ngram = 170, .next_choice = &scrunkly_ngram155_choices[3], .cumulative_probability = 169, .next_char = '!'},
-    {.next_ngram = 172, .next_choice = NULL, .cumulative_probability = 200, .next_char = '.'}
+    {.next_ngram = 169, .cumulative_probability = 100, .next_char = ' '},
+    {.next_ngram = 171, .cumulative_probability = 138, .next_char = ','},
+    {.next_ngram = 170, .cumulative_probability = 169, .next_char = '!'},
+    {.next_ngram = 172, .cumulative_probability = 200, .next_char = '.'}
 };
 static struct uwu_markov_choice scrunkly_ngram156_choices[] = {
-    {.next_ngram = 42, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'l'}
+    {.next_ngram = 42, .cumulative_probability = 1, .next_char = 'l'}
 };
 static struct uwu_markov_choice scrunkly_ngram157_choices[] = {
-    {.next_ngram = 106, .next_choice = &scrunkly_ngram157_choices[1], .cumulative_probability = 4, .next_char = 'k'},
-    {.next_ngram = 105, .next_choice = &scrunkly_ngram157_choices[2], .cumulative_probability = 7, .next_char = 'g'},
-    {.next_ngram = 104, .next_choice = NULL, .cumulative_probability = 8, .next_char = 'f'}
+    {.next_ngram = 106, .cumulative_probability = 4, .next_char = 'k'},
+    {.next_ngram = 105, .cumulative_probability = 7, .next_char = 'g'},
+    {.next_ngram = 104, .cumulative_probability = 8, .next_char = 'f'}
 };
 static struct uwu_markov_choice scrunkly_ngram158_choices[] = {
-    {.next_ngram = 134, .next_choice = &scrunkly_ngram158_choices[1], .cumulative_probability = 34, .next_char = '.'},
-    {.next_ngram = 132, .next_choice = &scrunkly_ngram158_choices[2], .cumulative_probability = 67, .next_char = '!'},
-    {.next_ngram = 133, .next_choice = NULL, .cumulative_probability = 100, .next_char = ','}
+    {.next_ngram = 134, .cumulative_probability = 34, .next_char = '.'},
+    {.next_ngram = 132, .cumulative_probability = 67, .next_char = '!'},
+    {.next_ngram = 133, .cumulative_probability = 100, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram159_choices[] = {
-    {.next_ngram = 148, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 148, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram160_choices[] = {
-    {.next_ngram = 52, .next_choice = NULL, .cumulative_probability = 1, .next_char = ' '}
+    {.next_ngram = 52, .cumulative_probability = 1, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram161_choices[] = {
-    {.next_ngram = 12, .next_choice = &scrunkly_ngram161_choices[1], .cumulative_probability = 2, .next_char = 't'},
-    {.next_ngram = 8, .next_choice = &scrunkly_ngram161_choices[2], .cumulative_probability = 3, .next_char = 'l'},
-    {.next_ngram = 11, .next_choice = &scrunkly_ngram161_choices[3], .cumulative_probability = 4, .next_char = 's'},
-    {.next_ngram = 13, .next_choice = &scrunkly_ngram161_choices[4], .cumulative_probability = 5, .next_char = 'w'},
-    {.next_ngram = 6, .next_choice = NULL, .cumulative_probability = 6, .next_char = 'i'}
+    {.next_ngram = 12, .cumulative_probability = 2, .next_char = 't'},
+    {.next_ngram = 8, .cumulative_probability = 3, .next_char = 'l'},
+    {.next_ngram = 11, .cumulative_probability = 4, .next_char = 's'},
+    {.next_ngram = 13, .cumulative_probability = 5, .next_char = 'w'},
+    {.next_ngram = 6, .cumulative_probability = 6, .next_char = 'i'}
 };
 static struct uwu_markov_choice scrunkly_ngram162_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram162_choices[1], .cumulative_probability = 24, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 43, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 24, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 43, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram163_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram164_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram164_choices[1], .cumulative_probability = 4, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 5, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 4, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 5, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram165_choices[] = {
-    {.next_ngram = 65, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 65, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram166_choices[] = {
-    {.next_ngram = 71, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'd'}
+    {.next_ngram = 71, .cumulative_probability = 1, .next_char = 'd'}
 };
 static struct uwu_markov_choice scrunkly_ngram167_choices[] = {
-    {.next_ngram = 94, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'e'}
+    {.next_ngram = 94, .cumulative_probability = 1, .next_char = 'e'}
 };
 static struct uwu_markov_choice scrunkly_ngram168_choices[] = {
-    {.next_ngram = 161, .next_choice = &scrunkly_ngram168_choices[1], .cumulative_probability = 3, .next_char = ' '},
-    {.next_ngram = 168, .next_choice = NULL, .cumulative_probability = 5, .next_char = 'w'}
+    {.next_ngram = 161, .cumulative_probability = 3, .next_char = ' '},
+    {.next_ngram = 168, .cumulative_probability = 5, .next_char = 'w'}
 };
 static struct uwu_markov_choice scrunkly_ngram169_choices[] = {
-    {.next_ngram = 12, .next_choice = &scrunkly_ngram169_choices[1], .cumulative_probability = 2, .next_char = 't'},
-    {.next_ngram = 11, .next_choice = &scrunkly_ngram169_choices[2], .cumulative_probability = 4, .next_char = 's'},
-    {.next_ngram = 3, .next_choice = &scrunkly_ngram169_choices[3], .cumulative_probability = 6, .next_char = 'd'},
-    {.next_ngram = 0, .next_choice = &scrunkly_ngram169_choices[4], .cumulative_probability = 8, .next_char = 'a'},
-    {.next_ngram = 7, .next_choice = &scrunkly_ngram169_choices[5], .cumulative_probability = 9, .next_char = 'k'},
-    {.next_ngram = 13, .next_choice = NULL, .cumulative_probability = 10, .next_char = 'w'}
+    {.next_ngram = 12, .cumulative_probability = 2, .next_char = 't'},
+    {.next_ngram = 11, .cumulative_probability = 4, .next_char = 's'},
+    {.next_ngram = 3, .cumulative_probability = 6, .next_char = 'd'},
+    {.next_ngram = 0, .cumulative_probability = 8, .next_char = 'a'},
+    {.next_ngram = 7, .cumulative_probability = 9, .next_char = 'k'},
+    {.next_ngram = 13, .cumulative_probability = 10, .next_char = 'w'}
 };
 static struct uwu_markov_choice scrunkly_ngram170_choices[] = {
-    {.next_ngram = 16, .next_choice = &scrunkly_ngram170_choices[1], .cumulative_probability = 5, .next_char = '!'},
-    {.next_ngram = 15, .next_choice = NULL, .cumulative_probability = 7, .next_char = ' '}
+    {.next_ngram = 16, .cumulative_probability = 5, .next_char = '!'},
+    {.next_ngram = 15, .cumulative_probability = 7, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram171_choices[] = {
-    {.next_ngram = 17, .next_choice = NULL, .cumulative_probability = 1, .next_char = ','}
+    {.next_ngram = 17, .cumulative_probability = 1, .next_char = ','}
 };
 static struct uwu_markov_choice scrunkly_ngram172_choices[] = {
-    {.next_ngram = 30, .next_choice = &scrunkly_ngram172_choices[1], .cumulative_probability = 51, .next_char = '.'},
-    {.next_ngram = 29, .next_choice = NULL, .cumulative_probability = 65, .next_char = ' '}
+    {.next_ngram = 30, .cumulative_probability = 51, .next_char = '.'},
+    {.next_ngram = 29, .cumulative_probability = 65, .next_char = ' '}
 };
 static struct uwu_markov_choice scrunkly_ngram173_choices[] = {
-    {.next_ngram = 38, .next_choice = NULL, .cumulative_probability = 1, .next_char = 'y'}
+    {.next_ngram = 38, .cumulative_probability = 1, .next_char = 'y'}
 };
 
 static uwu_markov_ngram scrunkly_ngrams[] = {
@@ -1428,7 +1427,7 @@ generate_new_ops(uwu_state* state) {
                         .remaining_chars = action.len
                     }
                 }
-            };//CREATE_PRINT_STRING(actions[random % NUM_ACTIONS]);
+            };
             ops[0] = op;
             ops[1] = null_op;
             break;
@@ -1518,16 +1517,17 @@ static int exec_op(uwu_state* state, char* buf, size_t len) {
                 unsigned int random = 0;
                 get_random_buffered(state, &random, sizeof(random));
                 random %= ngram.total_probability;
-                uwu_markov_choice* choice = ngram.choices;
+                int j = 0;
                 while (true) {
-                    size_t cumulative_probability = choice->cumulative_probability;
+                    uwu_markov_choice choice = ngram.choices[j];
+                    size_t cumulative_probability = choice.cumulative_probability;
                     if (random < cumulative_probability) {
-                        ngram_index = choice->next_ngram;
-                        int result = COPY_STR(buf + i, &choice->next_char, 1);
+                        ngram_index = choice.next_ngram;
+                        int result = COPY_STR(buf + i, &choice.next_char, 1);
                         if (result) return -EFAULT;
                         break;
                     }
-                    choice = choice->next_choice;
+                    j++;
                 }
             }
 
