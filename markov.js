@@ -1,14 +1,13 @@
 const fs = require('fs');
 
-// Generate a Markov chain probability table from a string
-const generateMarkov = (str, markovTable = {}, chainLength = 2) => {
+const generateMarkovIntoTable = (str, order, table) => {
     for (let i = 0; i < str.length - 2; i++) {
-        const cur = str.slice(i, i + chainLength);
-        const next = str[i + chainLength];
+        const cur = str.slice(i, i + order);
+        const next = str[i + order];
 
         let tableEntry;
-        if (Object.prototype.hasOwnProperty.call(markovTable, cur)) {
-            tableEntry = markovTable[cur];
+        if (Object.prototype.hasOwnProperty.call(table, cur)) {
+            tableEntry = table[cur];
             if (Object.prototype.hasOwnProperty.call(tableEntry, next)) {
                 tableEntry[next]++;
             } else {
@@ -16,14 +15,26 @@ const generateMarkov = (str, markovTable = {}, chainLength = 2) => {
             }
         } else {
             tableEntry = {[next]: 1};
-            markovTable[cur] = tableEntry;
+            table[cur] = tableEntry;
         }
     }
-
-    return markovTable;
 }
 
-const weightedRand = table => {
+// Generate a Markov chain probability table from a string or array of strings
+const generateMarkov = (strings, order = 2) => {
+    const table = {};
+    if (Array.isArray(strings)) {
+        for (const str of strings) {
+            generateMarkovIntoTable(str, order, table);
+        }
+    } else {
+        generateMarkovIntoTable(strings, order, table);
+    }
+
+    return {table, order};
+}
+
+const weightedRand = (table) => {
     const tableSum = Object.values(table).reduce((prev, cur) => prev + cur, 0);
     const random = Math.floor(Math.random() * tableSum);
     let sum = 0;
@@ -33,11 +44,11 @@ const weightedRand = table => {
     }
 }
 
-const generateFromTable = (table, len, start, chainLength = 2) => {
+const generateFromTable = ({table, order}, len, start) => {
     const generated = start.split('');
 
     while (generated.length < len) {
-        const prev = generated.slice(generated.length - chainLength, generated.length).join('');
+        const prev = generated.slice(generated.length - order, generated.length).join('');
         if (!Object.prototype.hasOwnProperty.call(table, prev)) return generated.join('');
         const nextOptions = table[prev];
 
@@ -48,7 +59,7 @@ const generateFromTable = (table, len, start, chainLength = 2) => {
 }
 
 // You didn't see anything
-const markovToC = (table, chainLength = 2, functionName) => {
+const markovToC = ({table, order}, functionName) => {
     const characters = new Set();
     for (const key of Object.keys(table)) {
         for (let i = 0; i < key.length; i++) {
@@ -68,7 +79,7 @@ const markovToC = (table, chainLength = 2, functionName) => {
 
     const STATE_PREV = 'state->prev';
 
-    const maxNumLen = chainLength * 2;
+    const maxNumLen = order * 2;
 
     const makeCase = key => {
         let caseNum = 0;
@@ -98,12 +109,12 @@ ${ifs.join('\n')}`;
     }
 
     const prevCombined = [];
-    for (let i = 0; i < chainLength; i++) {
-        prevCombined.push(`(prev_tokens[${i}] << ${(chainLength - i - 1) * 8})`);
+    for (let i = 0; i < order; i++) {
+        prevCombined.push(`(prev_tokens[${i}] << ${(order - i - 1) * 8})`);
     }
 
     const shifts = [];
-    for (let i = 1; i < chainLength; i++) {
+    for (let i = 1; i < order; i++) {
         shifts.push(`    state->prev[${i}] = state->prev[${i - 1}];`);
     }
 
@@ -129,7 +140,7 @@ ${functionName}_markov(uwu_markov_state* state) {
     }
 
     char next_token = ${functionName}_next_token(state->prev);
-    char end_token = state->prev[${chainLength - 1}];
+    char end_token = state->prev[${order - 1}];
 ${shifts.join('\n')}
     state->prev[0] = next_token;
     state->remaining_chars--;
@@ -192,19 +203,10 @@ for (let i = 0; i < 100; i++) {
     }))
 }
 
-const catgirlTable = {};
-for (const str of catgirlNonsense.split('\n')) {
-    generateMarkov(str, catgirlTable, 2);
-}
+const catgirlTable = generateMarkov(catgirlNonsense.split('\n'), 2)
+const keysmashTable = generateMarkov(keysmash, 1);
+const scrunklyTable = generateMarkov(scrunks, 2);
 
-const keysmashTable = generateMarkov(keysmash, {}, 1);
-
-const scrunklyTable = {};
-
-for (const str of scrunks) {
-    generateMarkov(str, scrunklyTable, 2);
-}
-
-console.log(markovToC(catgirlTable, 2, 'catnonsense'));
-console.log(markovToC(keysmashTable, 1, 'keysmash'));
-console.log(markovToC(scrunklyTable, 2, 'scrunkly'));
+console.log(markovToC(catgirlTable, 'catnonsense'));
+console.log(markovToC(keysmashTable, 'keysmash'));
+console.log(markovToC(scrunklyTable, 'scrunkly'));
