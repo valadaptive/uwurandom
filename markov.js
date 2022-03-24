@@ -1,21 +1,52 @@
-const fs = require('fs');
+const { table } = require('console');
+const util = require('util');
 
-const generateMarkovIntoTable = (str, order, table) => {
-    for (let i = 0; i < str.length - 2; i++) {
-        const cur = str.slice(i, i + order);
-        const next = str[i + order];
+// An array maps indices to values. Inverting it means returning a map of values to indices.
+const invertArray = arr => {
+    const inverted = {};
+    for (let i = 0; i < arr.length; i++) {
+        inverted[arr[i]] = i;
+    }
+    return inverted;
+}
+
+const gcd = (a, b) => {
+    if (b > a) {
+        const tmp = a;
+        a = b;
+        b = tmp;
+    }
+    while (true) {
+        if (b === 0) return a;
+        a %= b;
+        if (a === 0) return b;
+        b %= a;
+    }
+}
+
+const generateMarkovIntoTable = (str, order, table, chars, ngrams) => {
+    for (let i = 0; i < str.length - order; i++) {
+        const currentNgram = str.slice(i, i + order);
+        ngrams.add(currentNgram);
+        const nextChar = str[i + order];
+        chars.add(nextChar);
 
         let tableEntry;
-        if (Object.prototype.hasOwnProperty.call(table, cur)) {
-            tableEntry = table[cur];
-            if (Object.prototype.hasOwnProperty.call(tableEntry, next)) {
-                tableEntry[next]++;
+        if (Object.prototype.hasOwnProperty.call(table, currentNgram)) {
+            tableEntry = table[currentNgram];
+            if (Object.prototype.hasOwnProperty.call(tableEntry, nextChar)) {
+                tableEntry[nextChar]++;
             } else {
-                tableEntry[next] = 1;
+                tableEntry[nextChar] = 1;
             }
         } else {
-            tableEntry = {[next]: 1};
-            table[cur] = tableEntry;
+            tableEntry = {[nextChar]: 1};
+            table[currentNgram] = tableEntry;
+        }
+
+        if (i === (str.length - order) - 1) {
+            // make sure we get the *last* ngram too
+            ngrams.add(str.slice(i + 1));
         }
     }
 }
@@ -23,15 +54,67 @@ const generateMarkovIntoTable = (str, order, table) => {
 // Generate a Markov chain probability table from a string or array of strings
 const generateMarkov = (strings, order = 2) => {
     const table = {};
+    const chars = new Set();
+    const ngrams = new Set();
     if (Array.isArray(strings)) {
         for (const str of strings) {
-            generateMarkovIntoTable(str, order, table);
+            generateMarkovIntoTable(str, order, table, chars, ngrams);
         }
     } else {
-        generateMarkovIntoTable(strings, order, table);
+        generateMarkovIntoTable(strings, order, table, chars, ngrams);
     }
 
-    return {table, order};
+    const ngramsArr = Array.from(ngrams).sort();
+    const ngramIndices = invertArray(ngramsArr);
+
+    // Convert string-based table (slow) to numeric indices (fast)
+    const markovArr = [];
+
+    for (let i = 0; i < ngramsArr.length; i++) {
+        const ngram = ngramsArr[i];
+        const probs = table[ngram];
+        const probsArr = [];
+        let totalProbability = 0;
+        for (const nextChar of Object.keys(probs)) {
+            const nextNgram = ngram.slice(1) + nextChar;
+            const probability = probs[nextChar];
+            totalProbability += probability;
+            probsArr.push({
+                nextNgram: ngramIndices[nextNgram],
+                nextChar,
+                probability
+            });
+        }
+        // sort by probability in descending order to minimize linear search steps
+        probsArr.sort((a, b) => b.probability - a.probability);
+        let sum = 0;
+        for (let i = 0; i < probsArr.length; i++) {
+            sum += probsArr[i].probability;
+            probsArr[i].cumulativeProbability = sum;
+            delete probsArr[i].probability;
+        }
+        let probGCD = probsArr[0].cumulativeProbability;
+        if (probsArr.length > 1) {
+            for (let i = 1; i < probsArr.length; i++) {
+                probGCD = gcd(probGCD, probsArr[i].cumulativeProbability);
+            }
+        }
+        if (probGCD > 1) {
+            for (const entry of probsArr) {
+                entry.cumulativeProbability /= probGCD;
+            }
+            totalProbability /= probGCD;
+        }
+
+        markovArr.push({choices: probsArr, totalProbability});
+    }
+
+    return {
+        table,
+        markovArr,
+        order,
+        ngrams: {values: ngramsArr, indices: ngramIndices}
+    };
 }
 
 const weightedRand = (table) => {
@@ -45,114 +128,71 @@ const weightedRand = (table) => {
 }
 
 const generateFromTable = ({table, order}, len, start) => {
-    const generated = start.split('');
+    let generated = start;
 
     while (generated.length < len) {
-        const prev = generated.slice(generated.length - order, generated.length).join('');
-        if (!Object.prototype.hasOwnProperty.call(table, prev)) return generated.join('');
+        const prev = generated.slice(generated.length - order, generated.length);
+        if (!Object.prototype.hasOwnProperty.call(table, prev)) return generated;
         const nextOptions = table[prev];
 
-        generated.push(weightedRand(nextOptions));
+        generated += weightedRand(nextOptions);
     }
 
-    return generated.join('');
+    return generated;
 }
 
-// You didn't see anything
-const markovToC = ({table, order}, functionName) => {
-    const characters = new Set();
-    for (const key of Object.keys(table)) {
-        for (let i = 0; i < key.length; i++) {
-            characters.add(key[i]);
-        }
-        for (const innerKey of Object.keys(table[key])) {
-            characters.add(innerKey);
-        }
-    }
+const generateFromArray = ({markovArr: table, ngrams}, len, start) => {
+    let generated = start;
+    let ngram = ngrams.indices[start];
 
-    const charsArr = Array.from(characters);
-    charsArr.sort();
-    const charsToNum = {};
-    for (let i = 0; i < charsArr.length; i++) {
-        charsToNum[charsArr[i]] = i;
-    }
-
-    const STATE_PREV = 'state->prev';
-
-    const maxNumLen = order * 2;
-
-    const makeCase = key => {
-        let caseNum = 0;
-        for (let i = 0; i < key.length; i++) {
-            caseNum |= charsToNum[key[i]] << (i * 8);
-        }
-
-        const keys = Object.keys(table[key]);
-
-        const sum = Object.values(table[key]).reduce((prev, cur) => prev + cur, 0);
-
-        let acc = 0;
-
-        const ifs = [];
-
-        for (let i = 0; i < keys.length; i++) {
-            acc += table[key][keys[i]];
-            if (i === keys.length - 1) {
-                ifs.push(`            return ${charsToNum[keys[i]]}; // ${keys[i]}`);
-            } else {
-                ifs.push(`            if (random < ${acc}) return ${charsToNum[keys[i]]}; // ${keys[i]}`);
+    while (generated.length < len) {
+        const {choices, totalProbability} = table[ngram];
+        const random = Math.floor(Math.random() * totalProbability);
+        for (let i = 0; i < choices.length; i++) {
+            const {nextChar, nextNgram, cumulativeProbability} = choices[i];
+            if (random < cumulativeProbability) {
+                ngram = nextNgram;
+                generated += nextChar;
+                break;
             }
         }
-
-        return `        case 0x${('0'.repeat(maxNumLen) + caseNum.toString(16)).slice(-maxNumLen)}: // ${key}${keys.length > 1 ? `\n            random %= ${sum};` : ''}
-${ifs.join('\n')}`;
     }
 
-    const prevCombined = [];
-    for (let i = 0; i < order; i++) {
-        prevCombined.push(`(prev_tokens[${i}] << ${(order - i - 1) * 8})`);
-    }
-
-    const shifts = [];
-    for (let i = 1; i < order; i++) {
-        shifts.push(`    state->prev[${i}] = state->prev[${i - 1}];`);
-    }
-
-    const code = `
-static char
-${functionName}_next_token(char prev_tokens[]) {
-    unsigned int random = 0;
-    get_random_bytes(&random, sizeof(random));
-
-    switch (${prevCombined.join(' | ')}) {
-${Object.keys(table).map(key => makeCase(key)).join('\n')}
-        default:
-            return -1;
-    }
+    return generated;
 }
 
-static char
-${functionName}_markov(uwu_markov_state* state) {
-    static const char tokens[] = {${charsArr.map(c => `'${c}'`).join(' ,')}};
+const markovArrToC = ({markovArr: table, ngrams}, name) => {
+    const choicesDefs = [];
+    const ngramDefs = [];
 
-    if (state->remaining_chars == 0) {
-        return 0;
+    for (let i = 0; i < table.length; i++) {
+        const listName = `${name}_ngram${i}_choices`;
+        const {choices, totalProbability} = table[i];
+        const choiceDefs = [];
+        for (let i = 0; i < choices.length; i++) {
+            const {nextChar, nextNgram, cumulativeProbability} = choices[i];
+            choiceDefs.push(
+`    {.next_ngram = ${nextNgram}, .next_choice = ${i === choices.length - 1 ? 'NULL' : `&${listName}[${i + 1}]`}, .cumulative_probability = ${cumulativeProbability}, .next_char = '${nextChar}'}`
+);
+        }
+
+        choicesDefs.push(
+`static struct uwu_markov_choice ${listName}[] = {
+${choiceDefs.join(',\n')}
+};`
+        );
+
+        ngramDefs.push(`    {.choices = ${listName}, .total_probability = ${totalProbability}}${i === table.length - 1 ? '' : ','} // ${ngrams.values[i]}`);
     }
 
-    char next_token = ${functionName}_next_token(state->prev);
-    char end_token = state->prev[${order - 1}];
-${shifts.join('\n')}
-    state->prev[0] = next_token;
-    state->remaining_chars--;
-    if (next_token == -1) {
-        state->remaining_chars = 0;
-    }
+    const code =
+`${choicesDefs.join('\n')}
 
-    return tokens[(int) end_token];
-}
-`;
+static uwu_markov_ngram ${name}_ngrams[] = {
+${ngramDefs.join('\n')}
+};`;
 
-    return code;
+   return code;
 }
 
 const catgirlNonsense = `mraowmraowmewmraowmrrppurrrrmraownyanyamraowwwwwmrwmraowmreowmewmrowmraowmewmraownya
@@ -194,7 +234,6 @@ const xoshiro128 = (() => {
 })();
 
 for (let i = 0; i < 100; i++) {
-    let j = i;
     scrunks.push(scrunklyBase.replace(punctuationRegex, match => {
         if (xoshiro128() % 3 === 0) {
             return ','.repeat((xoshiro128() % 3) + 2);
@@ -207,6 +246,20 @@ const catgirlTable = generateMarkov(catgirlNonsense.split('\n'), 2)
 const keysmashTable = generateMarkov(keysmash, 1);
 const scrunklyTable = generateMarkov(scrunks, 2);
 
-console.log(markovToC(catgirlTable, 'catnonsense'));
-console.log(markovToC(keysmashTable, 'keysmash'));
-console.log(markovToC(scrunklyTable, 'scrunkly'));
+/*console.log(generateFromArray(catgirlTable, 100, 'ny'));
+
+console.time('from table');
+for (let i = 0; i < 1000; i++) {
+    generateFromTable(catgirlTable, 1000, 'ny');
+}
+console.timeEnd('from table');
+
+console.time('from array');
+for (let i = 0; i < 1000; i++) {
+    generateFromArray(catgirlTable, 1000, 'ny');
+}
+console.timeEnd('from array');*/
+
+console.log(markovArrToC(catgirlTable, 'catnonsense'));
+console.log(markovArrToC(keysmashTable, 'keysmash'));
+console.log(markovArrToC(scrunklyTable, 'scrunkly'));
