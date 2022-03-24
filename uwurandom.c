@@ -13,6 +13,8 @@ MODULE_DESCRIPTION("urandom but better");
 MODULE_AUTHOR("valadaptive");
 MODULE_VERSION("0.1");
 
+#define COPY_STR(dst, src, len) copy_to_user((dst), (src), (len))
+
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
 static int     dev_open(struct inode *, struct file *);
 static int     dev_release(struct inode *, struct file *);
@@ -45,6 +47,7 @@ struct uwu_markov_state {
 // Stores the state for a "print string" operation.
 typedef struct {
     char* string; /* pointer to string */
+    size_t remaining_chars; /* number of remaining characters */
 } uwu_print_string_state;
 
 // Stores the state for a "repeat this character" operation.
@@ -86,6 +89,7 @@ typedef struct {
     uwu_op ops[MAX_OPS];
     size_t current_op;
     int prev_op;
+    bool print_space;
 } uwu_state;
 
 /**
@@ -1040,7 +1044,8 @@ scrunkly_markov(uwu_markov_state* state) {
     .opcode = UWU_PRINT_STRING,\
     .state = {\
         .print_string = {\
-            .string = (printed_string)\
+            .string = (printed_string),\
+            .remaining_chars = sizeof(printed_string) - 1\
         }\
     }\
 }
@@ -1055,21 +1060,29 @@ scrunkly_markov(uwu_markov_state* state) {
     }\
 }
 
+
+typedef struct {
+    size_t len;
+    char* string;
+} string_with_len;
+
+#define STRING_WITH_LEN(literal) {.len = (sizeof(literal) - 1), .string = literal}
+
 #define NUM_ACTIONS 12
 
-static char *actions[NUM_ACTIONS] = {
-    "*tilts head*",
-    "*twitches ears slightly*",
-    "*purrs*",
-    "*falls asleep*",
-    "*sits on ur keyboard*",
-    "*nuzzles*",
-    "*stares at u*",
-    "*points towards case of monster zero ultra*",
-    "*sneezes*",
-    "*plays with yarn*",
-    "*eats all ur doritos*",
-    "*lies down on a random surface*"
+static string_with_len actions[NUM_ACTIONS] = {
+    STRING_WITH_LEN("*tilts head*"),
+    STRING_WITH_LEN("*twitches ears slightly*"),
+    STRING_WITH_LEN("*purrs*"),
+    STRING_WITH_LEN("*falls asleep*"),
+    STRING_WITH_LEN("*sits on ur keyboard*"),
+    STRING_WITH_LEN("*nuzzles*"),
+    STRING_WITH_LEN("*stares at u*"),
+    STRING_WITH_LEN("*points towards case of monster zero ultra*"),
+    STRING_WITH_LEN("*sneezes*"),
+    STRING_WITH_LEN("*plays with yarn*"),
+    STRING_WITH_LEN("*eats all ur doritos*"),
+    STRING_WITH_LEN("*lies down on a random surface*")
 };
 
 // Pick a random program from the list of programs and write it to the ops list
@@ -1151,7 +1164,16 @@ generate_new_ops(uwu_state* state) {
         }
         case 5: { // actions
             get_random_bytes(&random, sizeof(random));
-            uwu_op op = CREATE_PRINT_STRING(actions[random % NUM_ACTIONS]);
+            string_with_len action = actions[random % NUM_ACTIONS];
+            uwu_op op = {
+                .opcode = UWU_PRINT_STRING,
+                .state = {
+                    .print_string = {
+                        .string = action.string,
+                        .remaining_chars = action.len
+                    }
+                }
+            };//CREATE_PRINT_STRING(actions[random % NUM_ACTIONS]);
             ops[0] = op;
             ops[1] = null_op;
             break;
@@ -1204,29 +1226,60 @@ generate_new_ops(uwu_state* state) {
     }
 }
 
-// Execute an operation once
-// TODO: buffer for better performance
-static char exec_op(uwu_op* op) {
+// Execute an operation once. Returns the number of characters written, or a negative value on error.
+static int exec_op(uwu_op* op, char* buf, size_t len) {
     switch (op->opcode) {
         case UWU_PRINT_STRING: {
-            char character = *(op->state.print_string.string);
-            op->state.print_string.string++;
-            return character;
+            char* string = op->state.print_string.string;
+            size_t remaining = op->state.print_string.remaining_chars;
+
+            if (remaining == 0) return 0;
+
+            size_t num_chars_to_copy = remaining > len ? len : remaining;
+
+            int result = COPY_STR(buf, string, num_chars_to_copy);
+            // TODO: advance state in failure case
+            if (result) return -EFAULT;
+
+            // Advance state by number of characters copied;
+            op->state.print_string.string += num_chars_to_copy;
+            op->state.print_string.remaining_chars -= num_chars_to_copy;
+
+            return num_chars_to_copy;
         }
 
         case UWU_MARKOV: {
             char (*markov_fn)(uwu_markov_state*);
 
             markov_fn = op->state.markov.func;
-            return markov_fn(&op->state.markov);
+
+            int i;
+            for (i = 0; i < len; i++) {
+                char c = markov_fn(&op->state.markov);
+                if (c == 0) {
+                    // Out of characters. Return the number of characters thus written.
+                    return i;
+                }
+                int result = COPY_STR(buf + i, &c, 1);
+                if (result) return -EFAULT;
+            }
+
+            return len;
         }
 
         case UWU_REPEAT_CHARACTER: {
-            if (op->state.repeat_character.remaining_chars == 0) {
-                return 0;
+            char* c = &op->state.repeat_character.character;
+            int i;
+            for (i = 0; i < len; i++) {
+                if (op->state.repeat_character.remaining_chars == 0) {
+                    // Out of characters. Return the number of characters thus written.
+                    return i;
+                }
+                int result = COPY_STR(buf + i, c, 1);
+                if (result) return -EFAULT;
+                op->state.repeat_character.remaining_chars--;
             }
-            op->state.repeat_character.remaining_chars--;
-            return op->state.repeat_character.character;
+            return len;
         }
 
         default:
@@ -1234,44 +1287,48 @@ static char exec_op(uwu_op* op) {
     }
 }
 
-// Keep going, advancing and generating ops as needed, until we get a valid next
-// character, then return it.
-static char get_next_character(uwu_state* state) {
-    while (true) {
-        uwu_op* current_op = &state->ops[state->current_op];
-        if (current_op->opcode == UWU_NULL) {
-            // regenerate ops
-            generate_new_ops(state);
-            state->current_op = 0;
-            return ' ';
+static const char SPACE = ' ';
+
+// Fill the given buffer with UwU
+static int write_chars(uwu_state* state, char* buf, size_t n) {
+    size_t total_written = 0;
+    while (total_written < n) {
+        if (state->print_space) {
+            int result = COPY_STR(buf + total_written, &SPACE, 1);
+            if (result) return -EFAULT;
+            total_written++;
+            state->print_space = false;
+            continue;
         }
 
-        char character = exec_op(current_op);
+        uwu_op* current_op = &state->ops[state->current_op];
 
-        if (character == 0) {
+        size_t chars_written = exec_op(current_op, buf + total_written, n - total_written);
+        if (chars_written < 0) return chars_written;
+
+        if (chars_written == 0) {
             state->current_op++;
-            if (state->current_op >= MAX_OPS) {
+            if (state->current_op >= MAX_OPS || state->ops[state->current_op].opcode == UWU_NULL) {
                 // regenerate ops
                 generate_new_ops(state);
+                state->print_space = true;
                 state->current_op = 0;
             }
         } else {
-            return character;
+            total_written += chars_written;
         }
     }
+    return 0;
 }
 
 static ssize_t
 dev_read(struct file *fp, char *buf, size_t n, loff_t *of) {
     uwu_state* state = fp->private_data;
 
-    char character = get_next_character(state);
+    int result = write_chars(state, buf, n);
+    if (result < 0) return result;
 
-    // TODO: copy more at a time?
-    if (copy_to_user(buf, &character, 1))
-        return -EFAULT;
-
-    return 1;
+    return n;
 }
 
 static int
