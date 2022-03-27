@@ -1306,9 +1306,7 @@ typedef struct {
 
 #define STRING_WITH_LEN(literal) {.len = (sizeof(literal) - 1), .string = literal}
 
-#define NUM_ACTIONS 12
-
-static string_with_len actions[NUM_ACTIONS] = {
+static string_with_len actions[] = {
     STRING_WITH_LEN("*tilts head*"),
     STRING_WITH_LEN("*twitches ears slightly*"),
     STRING_WITH_LEN("*purrs*"),
@@ -1418,7 +1416,7 @@ generate_new_ops(uwu_state* state) {
         }
         case 5: { // actions
             get_random_buffered(state, &random, sizeof(random));
-            string_with_len action = actions[random % NUM_ACTIONS];
+            string_with_len action = actions[random % (sizeof(actions) / sizeof(string_with_len))];
             uwu_op op = {
                 .opcode = UWU_PRINT_STRING,
                 .state = {
