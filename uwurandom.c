@@ -95,7 +95,7 @@ typedef struct {
     size_t current_op;
     int prev_op;
     bool print_space;
-    char* rng_buf;
+    unsigned int* rng_buf;
     size_t rng_idx;
 } uwu_state;
 
@@ -1322,25 +1322,21 @@ static string_with_len actions[] = {
 };
 
 const size_t RAND_SIZE = 128;
-static void get_random_buffered(uwu_state* state, void* dst, size_t size) {
-    if (size > (RAND_SIZE - state->rng_idx)) {
-        if (size > RAND_SIZE) {
-            get_random_bytes(dst, size);
-            return;
-        }
-        get_random_bytes(state->rng_buf, RAND_SIZE);
+static unsigned int uwu_random_int(uwu_state* state) {
+    if (state->rng_idx >= RAND_SIZE) {
+        get_random_bytes(state->rng_buf, RAND_SIZE * sizeof(unsigned int));
         state->rng_idx = 0;
     }
-    memcpy(dst, state->rng_buf + state->rng_idx, size);
-    state->rng_idx += size;
+    unsigned int rand_value = state->rng_buf[state->rng_idx];
+    state->rng_idx++;
+    return rand_value;
 }
 
 // Pick a random program from the list of programs and write it to the ops list
 static void
 generate_new_ops(uwu_state* state) {
     // init to 0 in case get_random_bytes fails
-    unsigned int random = 0;
-    get_random_buffered(state, &random, sizeof(random));
+    unsigned int random = uwu_random_int(state);
 
     static uwu_op null_op = {
         .opcode = UWU_NULL
@@ -1369,7 +1365,7 @@ generate_new_ops(uwu_state* state) {
             break;
         }
         case 1: { // catgirl nonsense
-            get_random_buffered(state, &random, sizeof(random));
+            random = uwu_random_int(state);
             uwu_op op1 = CREATE_PRINT_STRING("mr");
             uwu_op op2 = {
                 .opcode = UWU_MARKOV,
@@ -1389,7 +1385,7 @@ generate_new_ops(uwu_state* state) {
             break;
         }
         case 2: { // nyaaaaaaa
-            get_random_buffered(state, &random, sizeof(random));
+            random = uwu_random_int(state);
             uwu_op op1 = CREATE_PRINT_STRING("ny");
             uwu_op op2 = CREATE_REPEAT_CHARACTER('a', (random % 7) + 1);
             ops[0] = op1;
@@ -1398,7 +1394,7 @@ generate_new_ops(uwu_state* state) {
             break;
         }
         case 3: { // >/////<
-            get_random_buffered(state, &random, sizeof(random));
+            random = uwu_random_int(state);
             uwu_op op1 = CREATE_PRINT_STRING(">");
             uwu_op op2 = CREATE_REPEAT_CHARACTER('/', (random % 4) + 3);
             uwu_op op3 = CREATE_PRINT_STRING("<");
@@ -1415,7 +1411,7 @@ generate_new_ops(uwu_state* state) {
             break;
         }
         case 5: { // actions
-            get_random_buffered(state, &random, sizeof(random));
+            random = uwu_random_int(state);
             string_with_len action = actions[random % (sizeof(actions) / sizeof(string_with_len))];
             uwu_op op = {
                 .opcode = UWU_PRINT_STRING,
@@ -1431,7 +1427,7 @@ generate_new_ops(uwu_state* state) {
             break;
         }
         case 6: { // keyboard mash
-            get_random_buffered(state, &random, sizeof(random));
+            random = uwu_random_int(state);
             uwu_op op = {
                 .opcode = UWU_MARKOV,
                 .state = {
@@ -1447,13 +1443,14 @@ generate_new_ops(uwu_state* state) {
             break;
         }
         case 7: { // screaming
-            get_random_buffered(state, &random, sizeof(random));
+            random = uwu_random_int(state);
             uwu_op op = CREATE_REPEAT_CHARACTER('A', (random % 12) + 5);
             ops[0] = op;
             ops[1] = null_op;
             break;
         }
         case 8: { // aww the scrunkly :)
+            random = uwu_random_int(state);
             uwu_op op1 = CREATE_PRINT_STRING("aw");
             uwu_op op2 = {
                 .opcode = UWU_MARKOV,
@@ -1512,8 +1509,7 @@ static int exec_op(uwu_state* state, char* buf, size_t len) {
             int i;
             for (i = 0; i < num_chars_to_copy; i++) {
                 uwu_markov_ngram ngram = ngrams[ngram_index];
-                unsigned int random = 0;
-                get_random_buffered(state, &random, sizeof(random));
+                unsigned int random = uwu_random_int(state);
                 random %= ngram.total_probability;
                 int j = 0;
                 while (true) {
@@ -1607,7 +1603,7 @@ dev_open(struct inode *ino, struct file *fp) {
         return -ENOMEM;
     }
 
-    char* rng_buf = kmalloc(RAND_SIZE, GFP_KERNEL);
+    unsigned int* rng_buf = kmalloc(RAND_SIZE * sizeof(unsigned int), GFP_KERNEL);
 
     if (rng_buf == NULL) {
         kfree(data);
