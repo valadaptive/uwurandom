@@ -23,7 +23,7 @@ On other distros, you may need to adjust the include paths in [the Makefile](./M
 Usage is also easy! >w<
 
 ```bash
-sudo insmod uwurandom.ko
+sudo insmod uwurandom.o
 ```
 
 Afterwards, you can just:
