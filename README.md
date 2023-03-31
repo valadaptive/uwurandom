@@ -16,7 +16,7 @@ make
 
 On Arch, just install [uwurandom-git-dkms](https://aur.archlinux.org/packages/uwurandom-git-dkms) from the AUR! >/////<
 
-On other distros, you may need to adjust the include paths in [the Makefile](./Makefile) depending on where your kernel headers are located (I think it's ``/usr/src/linux-headers-\`uname -r` `` on Ubuntu and ``/usr/lib/modules/`uname -r`/build`` on Arch but don't quote me on that). After that you *should* be able to `make` as usual.
+On other distros, you may need to adjust the include paths in [the Makefile](./Makefile) depending on where your kernel headers are located (I think it's ``/usr/src/linux-headers-`uname -r` `` on Ubuntu and ``/usr/lib/modules/`uname -r`/build`` on Arch but don't quote me on that). After that you *should* be able to `make` as usual.
 
 ### Usage
 
