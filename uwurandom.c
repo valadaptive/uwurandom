@@ -7,6 +7,7 @@
 #include <linux/init.h>
 #include <linux/slab.h>
 #include <linux/fs.h>
+#include <linux/version.h>
 
 MODULE_LICENSE("Dual MIT/GPL");
 MODULE_DESCRIPTION("urandom but better");
@@ -1631,9 +1632,16 @@ dev_release(struct inode *ino, struct file *fp) {
     return 0;
 }
 
+// Kernel versions 6.2 and up take a const* to devices in dev_uevent
+#if ( LINUX_VERSION_CODE >= KERNEL_VERSION(6,2,0) )
+typedef const struct device* uevent_dev_ptr;
+#else
+typedef struct device* uevent_dev_ptr;
+#endif
+
 // Make sure all users can thoroughly enjoy /dev/uwurandom
 static int
-dev_uevent(struct device* dev, struct kobj_uevent_env* env) {
+dev_uevent(uevent_dev_ptr dev, struct kobj_uevent_env* env) {
     int result = add_uevent_var(env, "DEVMODE=%#o", 0666);
     if (!result) {
         return result;
