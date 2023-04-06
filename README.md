@@ -9,25 +9,47 @@
 ### Installation
 Compilation is easy :3
 
-On Fedora, you can just do:
+First up, you'll need to install kernel headers for whichever kernel version you've installed.
+
+On Ubuntu or Debian (assuming your kernel is already up-to-date):
+```bash
+sudo apt-get install linux-headers-generic
+```
+
+On Fedora:
+```bash
+sudo dnf install kernel-devel
+```
+
+On Arch:
+```bash
+sudo pacman -S linux-headers
+```
+
+(or `linux-lts-headers` if you're using the `linux-lts` kernel)
+
+Once you've installed the kernel headers, you should be able to simply run `make` to build the kernel module:
 ```bash
 make
 ```
 
-On Arch, just install [uwurandom-git-dkms](https://aur.archlinux.org/packages/uwurandom-git-dkms) from the AUR! >/////<
-
-On other distros, you may need to adjust the include paths in [the Makefile](./Makefile) depending on where your kernel headers are located (I think it's ``/usr/src/linux-headers-`uname -r` `` on Ubuntu and ``/usr/lib/modules/`uname -r`/build`` on Arch but don't quote me on that). After that you *should* be able to `make` as usual.
-
 ### Usage
 
-Usage is also easy! >w<
+Usage is also easy! >w< To insert the kernel module, just run:
 
 ```bash
 sudo insmod uwurandom.ko
 ```
 
-Afterwards, you can just:
+When the module is loaded, it automatically sets up the `/dev/uwurandom` device, so you can do:
+
 ```bash
 cat /dev/uwurandom
 ```
 and witness its sheer glory with your own eyes.
+
+If things are a bit too silly and you want to un-load the kernel module, run:
+
+```
+sudo rmmod uwurandom
+```
