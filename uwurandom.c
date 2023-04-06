@@ -1635,7 +1635,7 @@ dev_release(struct inode *ino, struct file *fp) {
 static int
 dev_uevent(struct device* dev, struct kobj_uevent_env* env) {
     int result = add_uevent_var(env, "DEVMODE=%#o", 0666);
-    if (IS_ERR(result)) {
+    if (!result) {
         return result;
     }
     return 0;

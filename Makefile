@@ -1,6 +1,6 @@
 KERNELRELEASE ?= $(shell uname -r)
 KERNEL_DIR  ?= /usr/src/kernels/$(KERNELRELEASE)
-CFLAGS = -I`pwd`
+EXTRA_CFLAGS += -I`pwd` -Wno-declaration-after-statement
 
 obj-m += uwurandom.o
 
