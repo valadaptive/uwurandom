@@ -15,11 +15,21 @@ typedef struct {
     char character;
 } uwu_markov_ngram;
 
+typedef struct uwu_state uwu_state;
+typedef void uwu_op_factory(uwu_state* state);
+
+typedef struct {
+    uwu_op_factory** specials;
+    ssize_t initial_ngram;
+    size_t num_ngrams;
+    uwu_markov_ngram ngrams[];
+} uwu_markov_table;
+
 // Stores the state for a Markov chain operation.
 typedef struct {
     size_t prev_ngram; /* previous ngram */
     size_t remaining_chars; /* number of remaining characters */
-    uwu_markov_ngram* ngrams /* ngram table */;
+    uwu_markov_table* ngrams /* ngram table */;
 } uwu_markov_state;
 
 // Stores the state for a "print string" operation.
@@ -59,11 +69,7 @@ typedef struct {
     uwu_op_state state;
 } uwu_op;
 
-typedef struct uwu_state uwu_state;
-
-typedef void uwu_op_factory(uwu_state* state);
-
-#define MAX_OPS 4
+#define MAX_OPS 6
 
 struct uwu_state {
     uwu_op_factory** ops_table;

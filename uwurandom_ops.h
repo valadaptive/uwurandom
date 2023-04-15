@@ -27,7 +27,7 @@ static void uwu_op_uwu(uwu_state* state) {
 static void uwu_op_catgirl_nonsense(uwu_state* state) {
     unsigned int len = (uwu_random_int(state) % 125) + 25;
     uwu_push_op(state, CREATE_PRINT_STRING("nya"));
-    uwu_push_op(state, CREATE_MARKOV(catnonsense_ngrams, 7 /* mr */, len));
+    uwu_push_op(state, CREATE_MARKOV(catnonsense_ngrams, catnonsense_ngrams.initial_ngram, len));
     uwu_push_op(state, CREATE_PRINT_STRING("mr"));
 }
 static void uwu_op_nya(uwu_state* state) { // nyaaaaaaa
@@ -58,7 +58,7 @@ static void uwu_op_actions(uwu_state* state) {
 }
 static void uwu_op_keyboard_mash(uwu_state* state) {
     unsigned int len = (uwu_random_int(state) % 125) + 25;
-    unsigned int start_ngram = uwu_random_int(state) % ARRAY_SIZE(keysmash_ngrams);
+    unsigned int start_ngram = uwu_random_int(state) % keysmash_ngrams.num_ngrams;
     uwu_push_op(state, CREATE_MARKOV(keysmash_ngrams, start_ngram, len));
 }
 static void uwu_op_screaming(uwu_state* state) {
@@ -67,7 +67,7 @@ static void uwu_op_screaming(uwu_state* state) {
 }
 static void uwu_op_scrunkly(uwu_state* state) {
     unsigned int len = (uwu_random_int(state) % 75) + 25;
-    uwu_push_op(state, CREATE_MARKOV(scrunkly_ngrams, 37 /* aw */, len));
+    uwu_push_op(state, CREATE_MARKOV(scrunkly_ngrams, scrunkly_ngrams.initial_ngram, len));
     uwu_push_op(state, CREATE_PRINT_STRING("aw"));
 }
 static void uwu_op_owo(uwu_state* state) {

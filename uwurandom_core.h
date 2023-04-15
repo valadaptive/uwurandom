@@ -30,7 +30,7 @@
         .markov = {\
             .prev_ngram = (starting_ngram),\
             .remaining_chars = (len),\
-            .ngrams = (markov_data)\
+            .ngrams = &(markov_data)\
         }\
     }\
 }\
@@ -90,7 +90,8 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
 
         case UWU_MARKOV: {
             size_t ngram_index = op->state.markov.prev_ngram;
-            uwu_markov_ngram* ngrams = op->state.markov.ngrams;
+            uwu_markov_table* table = op->state.markov.ngrams;
+            uwu_markov_ngram* ngrams = table->ngrams;
             size_t remaining = op->state.markov.remaining_chars;
 
             size_t num_chars_to_copy = remaining > len ? len : remaining;
@@ -111,7 +112,14 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
                     j++;
                 }
 
-                COPY_CHAR(ngram.character, buf + i);
+                char ngram_char = ngram.character;
+
+                if (ngram_char < 0) {
+                    ssize_t special_idx = -1 - ngram_char;
+                    table->specials[special_idx](state);
+                } else {
+                    COPY_CHAR(ngram_char, buf + i);
+                }
             }
 
             op->state.markov.prev_ngram = ngram_index;
