@@ -49,7 +49,6 @@ typedef union {
 } uwu_op_state;
 
 typedef enum {
-    UWU_NULL,
     UWU_MARKOV,
     UWU_PRINT_STRING,
     UWU_REPEAT_CHARACTER
@@ -58,14 +57,13 @@ typedef enum {
 typedef struct {
     UWU_OPCODE opcode;
     uwu_op_state state;
-    void* op_data;
 } uwu_op;
 
 #define MAX_OPS 4
 
 typedef struct {
     uwu_op ops[MAX_OPS];
-    size_t current_op;
+    ssize_t current_op;
     int prev_op;
     bool print_space;
     unsigned int* rng_buf;

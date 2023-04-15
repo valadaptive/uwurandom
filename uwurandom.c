@@ -35,7 +35,7 @@ static int major;
 static struct class* dev_class;
 static dev_t dev_num;
 
-#define CREATE_PRINT_STRING(printed_string) {\
+#define CREATE_PRINT_STRING(printed_string) (uwu_op){\
     .opcode = UWU_PRINT_STRING,\
     .state = {\
         .print_string = {\
@@ -45,7 +45,7 @@ static dev_t dev_num;
     }\
 }
 
-#define CREATE_REPEAT_CHARACTER(repeated_character, num_repetitions) {\
+#define CREATE_REPEAT_CHARACTER(repeated_character, num_repetitions) (uwu_op){\
     .opcode = UWU_REPEAT_CHARACTER,\
     .state = {\
         .repeat_character = {\
@@ -55,6 +55,16 @@ static dev_t dev_num;
     }\
 }
 
+#define CREATE_MARKOV(markov_data, starting_ngram, len) (uwu_op){\
+    .opcode = UWU_MARKOV,\
+    .state = {\
+        .markov = {\
+            .prev_ngram = (starting_ngram),\
+            .remaining_chars = (len),\
+            .ngrams = (markov_data)\
+        }\
+    }\
+}\
 
 typedef struct {
     size_t len;
@@ -89,88 +99,69 @@ static unsigned int uwu_random_int(uwu_state* state) {
     return rand_value;
 }
 
+static inline int
+uwu_push_op(uwu_state* state, uwu_op op) {
+    if (state->current_op == MAX_OPS - 1) {
+        return -1;
+    }
+
+    state->current_op++;
+    state->ops[state->current_op] = op;
+
+    return 0;
+}
+
 // Pick a random program from the list of programs and write it to the ops list
 static void
 generate_new_ops(uwu_state* state) {
-    // init to 0 in case get_random_bytes fails
-    unsigned int random = uwu_random_int(state);
-
-    static uwu_op null_op = {
-        .opcode = UWU_NULL
-    };
+    unsigned int op_idx = uwu_random_int(state);
 
     static const int NUM_OPS = 10;
 
     if (state->prev_op == -1) {
-        random %= NUM_OPS;
+        op_idx %= NUM_OPS;
     } else {
         // don't repeat previous op
-        random %= NUM_OPS - 1;
-        if (random >= state->prev_op) {
-            random += 1;
+        op_idx %= NUM_OPS - 1;
+        if (op_idx >= state->prev_op) {
+            op_idx += 1;
         }
     }
 
-    state->prev_op = random;
+    state->prev_op = op_idx;
 
-    uwu_op* ops = state->ops;
-    switch (random) {
+    switch (op_idx) {
         case 0: { // uwu
-            uwu_op op = CREATE_PRINT_STRING("uwu");
-            ops[0] = op;
-            ops[1] = null_op;
+            uwu_push_op(state, CREATE_PRINT_STRING("uwu"));
             break;
         }
         case 1: { // catgirl nonsense
-            random = uwu_random_int(state);
-            uwu_op op1 = CREATE_PRINT_STRING("mr");
-            uwu_op op2 = {
-                .opcode = UWU_MARKOV,
-                .state = {
-                    .markov = {
-                        .prev_ngram = 7, // mr
-                        .remaining_chars = (random % 125) + 25,
-                        .ngrams = catnonsense_ngrams
-                    }
-                }
-            };
-            uwu_op op3 = CREATE_PRINT_STRING("nya");
-            ops[0] = op1;
-            ops[1] = op2;
-            ops[2] = op3;
-            ops[3] = null_op;
+            unsigned int len = (uwu_random_int(state) % 125) + 25;
+            uwu_push_op(state, CREATE_PRINT_STRING("nya"));
+            uwu_push_op(state, CREATE_MARKOV(catnonsense_ngrams, 7 /* mr */, len));
+            uwu_push_op(state, CREATE_PRINT_STRING("mr"));
             break;
         }
         case 2: { // nyaaaaaaa
-            random = uwu_random_int(state);
-            uwu_op op1 = CREATE_PRINT_STRING("ny");
-            uwu_op op2 = CREATE_REPEAT_CHARACTER('a', (random % 7) + 1);
-            ops[0] = op1;
-            ops[1] = op2;
-            ops[2] = null_op;
+            unsigned int repeats = (uwu_random_int(state) % 7) + 1;
+            uwu_push_op(state, CREATE_REPEAT_CHARACTER('a', repeats));
+            uwu_push_op(state, CREATE_PRINT_STRING("ny"));
             break;
         }
         case 3: { // >/////<
-            random = uwu_random_int(state);
-            uwu_op op1 = CREATE_PRINT_STRING(">");
-            uwu_op op2 = CREATE_REPEAT_CHARACTER('/', (random % 4) + 3);
-            uwu_op op3 = CREATE_PRINT_STRING("<");
-            ops[0] = op1;
-            ops[1] = op2;
-            ops[2] = op3;
-            ops[3] = null_op;
+            unsigned int repeats = (uwu_random_int(state) % 4) + 3;
+            uwu_push_op(state, CREATE_PRINT_STRING("<"));
+            uwu_push_op(state, CREATE_REPEAT_CHARACTER('/', repeats));
+            uwu_push_op(state, CREATE_PRINT_STRING(">"));
             break;
         }
         case 4: { // :3
-            uwu_op op = CREATE_PRINT_STRING(":3");
-            ops[0] = op;
-            ops[1] = null_op;
+            uwu_push_op(state, CREATE_PRINT_STRING(":3"));
             break;
         }
         case 5: { // actions
-            random = uwu_random_int(state);
-            string_with_len action = actions[random % (sizeof(actions) / sizeof(string_with_len))];
-            uwu_op op = {
+            string_with_len action = actions[uwu_random_int(state) % ARRAY_SIZE(actions)];
+            uwu_push_op(state, (uwu_op){
                 .opcode = UWU_PRINT_STRING,
                 .state = {
                     .print_string = {
@@ -178,56 +169,28 @@ generate_new_ops(uwu_state* state) {
                         .remaining_chars = action.len
                     }
                 }
-            };
-            ops[0] = op;
-            ops[1] = null_op;
+            });
             break;
         }
         case 6: { // keyboard mash
-            random = uwu_random_int(state);
-            uwu_op op = {
-                .opcode = UWU_MARKOV,
-                .state = {
-                    .markov = {
-                        .prev_ngram = random % (sizeof(keysmash_ngrams) / sizeof(uwu_markov_ngram)),
-                        .remaining_chars = (random % 125) + 25,
-                        .ngrams = keysmash_ngrams
-                    }
-                }
-            };
-            ops[0] = op;
-            ops[1] = null_op;
+            unsigned int len = (uwu_random_int(state) % 125) + 25;
+            unsigned int start_ngram = uwu_random_int(state) % ARRAY_SIZE(keysmash_ngrams);
+            uwu_push_op(state, CREATE_MARKOV(keysmash_ngrams, start_ngram, len));
             break;
         }
         case 7: { // screaming
-            random = uwu_random_int(state);
-            uwu_op op = CREATE_REPEAT_CHARACTER('A', (random % 12) + 5);
-            ops[0] = op;
-            ops[1] = null_op;
+            unsigned int repeats = (uwu_random_int(state) % 12) + 5;
+            uwu_push_op(state, CREATE_REPEAT_CHARACTER('A', repeats));
             break;
         }
         case 8: { // aww the scrunkly :)
-            random = uwu_random_int(state);
-            uwu_op op1 = CREATE_PRINT_STRING("aw");
-            uwu_op op2 = {
-                .opcode = UWU_MARKOV,
-                .state = {
-                    .markov = {
-                        .prev_ngram = 37, // aw
-                        .remaining_chars = (random % 75) + 25,
-                        .ngrams = scrunkly_ngrams
-                    }
-                }
-            };
-            ops[0] = op1;
-            ops[1] = op2;
-            ops[2] = null_op;
+            unsigned int len = (uwu_random_int(state) % 75) + 25;
+            uwu_push_op(state, CREATE_MARKOV(scrunkly_ngrams, 37 /* aw */, len));
+            uwu_push_op(state, CREATE_PRINT_STRING("aw"));
             break;
         }
         case 9: { // owo
-            uwu_op op = CREATE_PRINT_STRING("owo");
-            ops[0] = op;
-            ops[1] = null_op;
+            uwu_push_op(state, CREATE_PRINT_STRING("owo"));
             break;
         }
     }
@@ -324,12 +287,11 @@ static int write_chars(uwu_state* state, char* buf, size_t n) {
         if (chars_written < 0) return chars_written;
 
         if (chars_written == 0) {
-            state->current_op++;
-            if (state->current_op >= MAX_OPS || state->ops[state->current_op].opcode == UWU_NULL) {
+            state->current_op--;
+            if (state->current_op == -1) {
                 // regenerate ops
                 generate_new_ops(state);
                 state->print_space = true;
-                state->current_op = 0;
             }
         } else {
             total_written += chars_written;
@@ -366,7 +328,7 @@ dev_open(struct inode *ino, struct file *fp) {
     }
 
     data->prev_op = -1;
-    data->current_op = 0;
+    data->current_op = -1;
     data->rng_buf = rng_buf;
     // mark the offset into rng_buf as just past the end of the buffer,
     // meaning we'll regenerate the buffer the first time we ask for random bytes
