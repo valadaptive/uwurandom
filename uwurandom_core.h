@@ -3,7 +3,6 @@
 
 #include "uwurandom_platform.h"
 #include "uwurandom_types.h"
-#include "uwurandom_markov_data.h"
 
 #define CREATE_PRINT_STRING(printed_string) (uwu_op){\
     .opcode = UWU_PRINT_STRING,\
@@ -36,28 +35,6 @@
     }\
 }\
 
-typedef struct {
-    size_t len;
-    char* string;
-} string_with_len;
-
-#define STRING_WITH_LEN(literal) {.len = (sizeof(literal) - 1), .string = literal}
-
-static string_with_len actions[] = {
-    STRING_WITH_LEN("*tilts head*"),
-    STRING_WITH_LEN("*twitches ears slightly*"),
-    STRING_WITH_LEN("*purrs*"),
-    STRING_WITH_LEN("*falls asleep*"),
-    STRING_WITH_LEN("*sits on ur keyboard*"),
-    STRING_WITH_LEN("*nuzzles*"),
-    STRING_WITH_LEN("*stares at u*"),
-    STRING_WITH_LEN("*points towards case of monster zero ultra*"),
-    STRING_WITH_LEN("*sneezes*"),
-    STRING_WITH_LEN("*plays with yarn*"),
-    STRING_WITH_LEN("*eats all ur doritos*"),
-    STRING_WITH_LEN("*lies down on a random surface*")
-};
-
 static inline int
 uwu_push_op(uwu_state* state, uwu_op op) {
     if (state->current_op == MAX_OPS - 1) {
@@ -75,13 +52,11 @@ static void
 generate_new_ops(uwu_state* state) {
     unsigned int op_idx = uwu_random_int(state);
 
-    static const int NUM_OPS = 10;
-
     if (state->prev_op == -1) {
-        op_idx %= NUM_OPS;
+        op_idx %= state->num_ops;
     } else {
         // don't repeat previous op
-        op_idx %= NUM_OPS - 1;
+        op_idx %= state->num_ops - 1;
         if (op_idx >= state->prev_op) {
             op_idx += 1;
         }
@@ -89,70 +64,7 @@ generate_new_ops(uwu_state* state) {
 
     state->prev_op = op_idx;
 
-    switch (op_idx) {
-        case 0: { // uwu
-            uwu_push_op(state, CREATE_PRINT_STRING("uwu"));
-            break;
-        }
-        case 1: { // catgirl nonsense
-            unsigned int len = (uwu_random_int(state) % 125) + 25;
-            uwu_push_op(state, CREATE_PRINT_STRING("nya"));
-            uwu_push_op(state, CREATE_MARKOV(catnonsense_ngrams, 7 /* mr */, len));
-            uwu_push_op(state, CREATE_PRINT_STRING("mr"));
-            break;
-        }
-        case 2: { // nyaaaaaaa
-            unsigned int repeats = (uwu_random_int(state) % 7) + 1;
-            uwu_push_op(state, CREATE_REPEAT_CHARACTER('a', repeats));
-            uwu_push_op(state, CREATE_PRINT_STRING("ny"));
-            break;
-        }
-        case 3: { // >/////<
-            unsigned int repeats = (uwu_random_int(state) % 4) + 3;
-            uwu_push_op(state, CREATE_PRINT_STRING("<"));
-            uwu_push_op(state, CREATE_REPEAT_CHARACTER('/', repeats));
-            uwu_push_op(state, CREATE_PRINT_STRING(">"));
-            break;
-        }
-        case 4: { // :3
-            uwu_push_op(state, CREATE_PRINT_STRING(":3"));
-            break;
-        }
-        case 5: { // actions
-            string_with_len action = actions[uwu_random_int(state) % ARRAY_SIZE(actions)];
-            uwu_push_op(state, (uwu_op){
-                .opcode = UWU_PRINT_STRING,
-                .state = {
-                    .print_string = {
-                        .string = action.string,
-                        .remaining_chars = action.len
-                    }
-                }
-            });
-            break;
-        }
-        case 6: { // keyboard mash
-            unsigned int len = (uwu_random_int(state) % 125) + 25;
-            unsigned int start_ngram = uwu_random_int(state) % ARRAY_SIZE(keysmash_ngrams);
-            uwu_push_op(state, CREATE_MARKOV(keysmash_ngrams, start_ngram, len));
-            break;
-        }
-        case 7: { // screaming
-            unsigned int repeats = (uwu_random_int(state) % 12) + 5;
-            uwu_push_op(state, CREATE_REPEAT_CHARACTER('A', repeats));
-            break;
-        }
-        case 8: { // aww the scrunkly :)
-            unsigned int len = (uwu_random_int(state) % 75) + 25;
-            uwu_push_op(state, CREATE_MARKOV(scrunkly_ngrams, 37 /* aw */, len));
-            uwu_push_op(state, CREATE_PRINT_STRING("aw"));
-            break;
-        }
-        case 9: { // owo
-            uwu_push_op(state, CREATE_PRINT_STRING("owo"));
-            break;
-        }
-    }
+    state->ops_table[op_idx](state);
 }
 
 // Execute an operation once. Returns the number of characters written, or a negative value on error.

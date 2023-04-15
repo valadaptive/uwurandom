@@ -59,15 +59,29 @@ typedef struct {
     uwu_op_state state;
 } uwu_op;
 
+typedef struct uwu_state uwu_state;
+
+typedef void uwu_op_factory(uwu_state* state);
+
 #define MAX_OPS 4
 
-typedef struct {
+struct uwu_state {
+    uwu_op_factory** ops_table;
+    size_t num_ops;
+
     uwu_op ops[MAX_OPS];
     ssize_t current_op;
     int prev_op;
     bool print_space;
     unsigned int* rng_buf;
     size_t rng_idx;
-} uwu_state;
+};
+
+typedef struct {
+    size_t len;
+    char* string;
+} string_with_len;
+
+#define STRING_WITH_LEN(literal) {.len = (sizeof(literal) - 1), .string = literal}
 
 #endif

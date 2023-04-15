@@ -9,6 +9,7 @@
 #include <linux/version.h>
 
 #include "uwurandom_core.h"
+#include "uwurandom_ops.h"
 
 MODULE_LICENSE("Dual MIT/GPL");
 MODULE_DESCRIPTION("urandom but better");
@@ -56,6 +57,9 @@ dev_open(struct inode *ino, struct file *fp) {
         kfree(data);
         return -ENOMEM;
     }
+
+    data->ops_table = uwu_op_table_default;
+    data->num_ops = ARRAY_SIZE(uwu_op_table_default);
 
     data->prev_op = -1;
     data->current_op = -1;

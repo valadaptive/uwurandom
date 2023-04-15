@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "uwurandom_core.h"
+#include "uwurandom_ops.h"
 
 static volatile sig_atomic_t keep_running = 1;
 
@@ -29,6 +30,9 @@ int main() {
         free(data);
         return -ENOMEM;
     }
+
+    data->ops_table = uwu_op_table_default;
+    data->num_ops = ARRAY_SIZE(uwu_op_table_default);
 
     data->prev_op = -1;
     data->current_op = -1;
