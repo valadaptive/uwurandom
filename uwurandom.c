@@ -51,17 +51,14 @@ dev_open(struct inode *ino, struct file *fp) {
         return -ENOMEM;
     }
 
+    int init_err = uwu_init_state(data, uwu_op_table_default, ARRAY_SIZE(uwu_op_table_default));
+
     int rng_err = uwu_init_rng(data);
-    if (rng_err) {
+    if (init_err) {
+        uwu_destroy_state(data);
         kfree(data);
         return rng_err;
     }
-
-    data->ops_table = uwu_op_table_default;
-    data->num_ops = ARRAY_SIZE(uwu_op_table_default);
-
-    data->prev_op = -1;
-    data->current_op = -1;
 
     fp->private_data = data;
 
@@ -70,7 +67,7 @@ dev_open(struct inode *ino, struct file *fp) {
 
 static int
 dev_release(struct inode *ino, struct file *fp) {
-    uwu_destroy_rng((uwu_state*) fp->private_data);
+    uwu_destroy_state((uwu_state*) fp->private_data);
     kfree(fp->private_data);
     fp->private_data = NULL;
     return 0;

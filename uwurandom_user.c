@@ -18,39 +18,27 @@ static void sig_handler(int _) {
 int main() {
     size_t len = sizeof(uwu_state);
 
-    uwu_state *data = malloc(len);
+    uwu_state data = {};
 
-    if (data == NULL) {
-        return -ENOMEM;
+    int init_err = uwu_init_state(&data, uwu_op_table_default, ARRAY_SIZE(uwu_op_table_default));
+
+    if (init_err) {
+        return init_err;
     }
-
-    int rng_err = uwu_init_rng(data);
-    if (rng_err) {
-        free(data);
-        return rng_err;
-    }
-
-    data->ops_table = uwu_op_table_default;
-    data->num_ops = ARRAY_SIZE(uwu_op_table_default);
-
-    data->prev_op = -1;
-    data->current_op = -1;
 
     char* output_buf = malloc(BUF_SIZE);
     if (output_buf == NULL) {
-        uwu_destroy_rng(data);
-        free(data);
+        uwu_destroy_state(&data);
         return -ENOMEM;
     }
 
     signal(SIGINT, sig_handler);
     while (keep_running) {
-        uwu_write_chars(data, output_buf, BUF_SIZE);
+        uwu_write_chars(&data, output_buf, BUF_SIZE);
         fwrite(output_buf, 1, BUF_SIZE, stdout);
     }
 
-    uwu_destroy_rng(data);
-    free(data);
+    uwu_destroy_state(&data);
     free(output_buf);
 
     return 0;

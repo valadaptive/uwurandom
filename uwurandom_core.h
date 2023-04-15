@@ -176,4 +176,21 @@ static int uwu_write_chars(uwu_state* state, char* buf, size_t n) {
     return 0;
 }
 
+static int uwu_init_state(uwu_state* state, uwu_op_factory** ops_table, size_t num_ops) {
+    int rng_err = uwu_init_rng(state);
+    if (rng_err) return rng_err;
+
+    state->ops_table = ops_table;
+    state->num_ops = num_ops;
+
+    state->current_op = -1;
+    state->prev_op = -1;
+
+    return 0;
+}
+
+static void uwu_destroy_state(uwu_state* state) {
+    uwu_destroy_rng(state);
+}
+
 #endif
