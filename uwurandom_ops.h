@@ -47,6 +47,9 @@ static void uwu_op_blush(uwu_state* state) {
     uwu_push_op(state, CREATE_PRINT_STRING(">"));
 }
 static void uwu_op_smiley(uwu_state* state) {
+    if (uwu_random_int(state) % 100 == 0) {
+        uwu_push_op(state, CREATE_PRINT_STRING("c"));
+    }
     uwu_push_op(state, CREATE_PRINT_STRING(":3"));
 }
 static void uwu_op_actions(uwu_state* state) {
