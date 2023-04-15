@@ -80,7 +80,6 @@ struct uwu_state {
     uwu_op ops[MAX_OPS];
     ssize_t current_op;
     int prev_op;
-    bool print_space;
     uwu_random_number* rng_buf;
     size_t rng_idx;
 };

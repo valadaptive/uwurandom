@@ -62,7 +62,6 @@ dev_open(struct inode *ino, struct file *fp) {
 
     data->prev_op = -1;
     data->current_op = -1;
-    generate_new_ops(data);
 
     fp->private_data = data;
 

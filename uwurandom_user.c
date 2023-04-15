@@ -36,8 +36,6 @@ int main() {
     data->prev_op = -1;
     data->current_op = -1;
 
-    generate_new_ops(data);
-
     char* output_buf = malloc(BUF_SIZE);
     if (output_buf == NULL) {
         uwu_destroy_rng(data);

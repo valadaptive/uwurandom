@@ -64,6 +64,9 @@ generate_new_ops(uwu_state* state) {
 
     state->prev_op = op_idx;
 
+    // print a space after the op is done executing
+    uwu_push_op(state, CREATE_PRINT_STRING(" "));
+
     state->ops_table[op_idx](state);
 }
 
@@ -160,21 +163,13 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
 static int uwu_write_chars(uwu_state* state, char* buf, size_t n) {
     size_t total_written = 0;
     while (total_written < n) {
-        if (state->print_space) {
-            COPY_CHAR(' ', buf + total_written);
-            total_written++;
-            state->print_space = false;
-            continue;
+        if (state->current_op == -1) {
+            // regenerate ops
+            generate_new_ops(state);
         }
 
         size_t chars_written = uwu_exec_op(state, buf + total_written, n - total_written);
         if (chars_written < 0) return chars_written;
-
-        if (state->current_op == -1) {
-            // regenerate ops
-            generate_new_ops(state);
-            state->print_space = true;
-        }
 
         total_written += chars_written;
     }
