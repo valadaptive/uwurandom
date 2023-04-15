@@ -244,9 +244,9 @@ const catgirlTable = generateMarkov(catgirlNonsense.split('\n'), 2)
 const keysmashTable = generateMarkov(keysmash, 1);
 const scrunklyTable = generateMarkov(scrunks, 2);
 
-console.log(generateFromArray(catgirlTable, 100, 'ny'));
+/* console.log(generateFromArray(catgirlTable, 100, 'ny'));
 
-/*console.time('from table');
+console.time('from table');
 for (let i = 0; i < 1000; i++) {
     generateFromTable(catgirlTable, 1000, 'ny');
 }
