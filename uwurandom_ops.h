@@ -18,7 +18,12 @@ static string_with_len actions[] = {
     STRING_WITH_LEN("*sneezes*"),
     STRING_WITH_LEN("*plays with yarn*"),
     STRING_WITH_LEN("*eats all ur doritos*"),
-    STRING_WITH_LEN("*lies down on a random surface*")
+    STRING_WITH_LEN("*lies down on a random surface*"),
+    STRING_WITH_LEN("*rolls around on the floor*"),
+    STRING_WITH_LEN("*spins around*"),
+    STRING_WITH_LEN("*tugs on ur sleeve*"),
+    STRING_WITH_LEN("*jumps a little*"),
+    STRING_WITH_LEN("*yawns*")
 };
 
 static void uwu_op_uwu(uwu_state* state) {
@@ -30,7 +35,7 @@ static void uwu_op_catgirl_nonsense(uwu_state* state) {
     uwu_push_op(state, CREATE_MARKOV(catnonsense_ngrams, catnonsense_ngrams.initial_ngram, len));
     uwu_push_op(state, CREATE_PRINT_STRING("mr"));
 }
-static void uwu_op_nya(uwu_state* state) { // nyaaaaaaa
+static void uwu_op_nya(uwu_state* state) {
     unsigned int repeats = (uwu_random_int(state) % 7) + 1;
     uwu_push_op(state, CREATE_REPEAT_CHARACTER('a', repeats));
     uwu_push_op(state, CREATE_PRINT_STRING("ny"));
@@ -73,6 +78,11 @@ static void uwu_op_scrunkly(uwu_state* state) {
 static void uwu_op_owo(uwu_state* state) {
     uwu_push_op(state, CREATE_PRINT_STRING("owo"));
 }
+static void uwu_op_uweh(uwu_state* state) {
+    unsigned int repeats = (uwu_random_int(state) % 5) + 3;
+    uwu_push_op(state, CREATE_REPEAT_CHARACTER('h', repeats));
+    uwu_push_op(state, CREATE_PRINT_STRING("uwe"));
+}
 
 static uwu_op_factory* uwu_op_table_default[] = {
     uwu_op_uwu,
@@ -84,7 +94,8 @@ static uwu_op_factory* uwu_op_table_default[] = {
     uwu_op_keyboard_mash,
     uwu_op_screaming,
     uwu_op_scrunkly,
-    uwu_op_owo
+    uwu_op_owo,
+    uwu_op_uweh
 };
 
 #endif
