@@ -3,7 +3,7 @@
 
 #include <linux/types.h>
 
-typedef unsigned int uwu_random_number;
+typedef uint32_t uwu_random_number;
 
 typedef struct uwu_markov_choice uwu_markov_choice;
 struct uwu_markov_choice {

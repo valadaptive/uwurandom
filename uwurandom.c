@@ -51,11 +51,10 @@ dev_open(struct inode *ino, struct file *fp) {
         return -ENOMEM;
     }
 
-    uwu_random_number* rng_buf = kmalloc(RAND_SIZE * sizeof(uwu_random_number), GFP_KERNEL);
-
-    if (rng_buf == NULL) {
+    int rng_err = uwu_init_rng(data);
+    if (rng_err) {
         kfree(data);
-        return -ENOMEM;
+        return rng_err;
     }
 
     data->ops_table = uwu_op_table_default;
@@ -63,10 +62,6 @@ dev_open(struct inode *ino, struct file *fp) {
 
     data->prev_op = -1;
     data->current_op = -1;
-    data->rng_buf = rng_buf;
-    // mark the offset into rng_buf as just past the end of the buffer,
-    // meaning we'll regenerate the buffer the first time we ask for random bytes
-    data->rng_idx = RAND_SIZE;
     generate_new_ops(data);
 
     fp->private_data = data;
@@ -76,7 +71,7 @@ dev_open(struct inode *ino, struct file *fp) {
 
 static int
 dev_release(struct inode *ino, struct file *fp) {
-    kfree(((uwu_state*) fp->private_data)->rng_buf);
+    uwu_destroy_rng((uwu_state*) fp->private_data);
     kfree(fp->private_data);
     fp->private_data = NULL;
     return 0;

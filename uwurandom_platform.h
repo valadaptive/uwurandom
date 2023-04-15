@@ -20,7 +20,31 @@
 
 #ifdef __KERNEL__
 
-const size_t RAND_SIZE = 128;
+#define RAND_SIZE 128
+
+static int uwu_init_rng(uwu_state* state) {
+    uwu_random_number* rng_buf = kmalloc(RAND_SIZE * sizeof(uwu_random_number), GFP_KERNEL);
+
+    if (rng_buf == NULL) {
+        return -ENOMEM;
+    }
+
+    state->rng_buf = rng_buf;
+
+    // mark the offset into rng_buf as just past the end of the buffer,
+    // meaning we'll regenerate the buffer the first time we ask for random bytes
+    state->rng_idx = RAND_SIZE;
+
+    return 0;
+}
+
+static void uwu_destroy_rng(uwu_state* state) {
+    if (state->rng_buf) {
+        kfree(state->rng_buf);
+        state->rng_buf = NULL;
+    }
+}
+
 static uwu_random_number uwu_random_int(uwu_state* state) {
     if (state->rng_idx >= RAND_SIZE) {
         get_random_bytes(state->rng_buf, RAND_SIZE * sizeof(uwu_random_number));
@@ -51,6 +75,30 @@ static uwu_random_number uwu_random_int(uwu_state* state) {
 #include <string.h>
 
 const size_t RAND_SIZE = 128;
+
+static int uwu_init_rng(uwu_state* state) {
+    uwu_random_number* rng_buf = malloc(RAND_SIZE * sizeof(uwu_random_number));
+
+    if (rng_buf == NULL) {
+        return -ENOMEM;
+    }
+
+    state->rng_buf = rng_buf;
+
+    // mark the offset into rng_buf as just past the end of the buffer,
+    // meaning we'll regenerate the buffer the first time we ask for random bytes
+    state->rng_idx = RAND_SIZE;
+
+    return 0;
+}
+
+static void uwu_destroy_rng(uwu_state* state) {
+    if (state->rng_buf) {
+        free(state->rng_buf);
+        state->rng_buf = NULL;
+    }
+}
+
 static uwu_random_number uwu_random_int(uwu_state* state) {
     if (state->rng_idx >= RAND_SIZE) {
         getrandom(state->rng_buf, RAND_SIZE * sizeof(uwu_random_number), 0);
