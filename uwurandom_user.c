@@ -48,9 +48,13 @@ int main() {
 
     signal(SIGINT, sig_handler);
     while (keep_running) {
-        write_chars(data, output_buf, BUF_SIZE);
+        uwu_write_chars(data, output_buf, BUF_SIZE);
         fwrite(output_buf, 1, BUF_SIZE, stdout);
     }
+
+    free(rng_buf);
+    free(data);
+    free(output_buf);
 
     return 0;
 }

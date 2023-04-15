@@ -1,4 +1,3 @@
-#include <linux/uaccess.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/random.h>
@@ -15,20 +14,6 @@ MODULE_LICENSE("Dual MIT/GPL");
 MODULE_DESCRIPTION("urandom but better");
 MODULE_AUTHOR("valadaptive");
 MODULE_VERSION("0.1");
-
-#define COPY_STR(dst, src, len) do {\
-    int result = copy_to_user((dst), (src), (len));\
-    if (result) {\
-        return -EFAULT;\
-    }\
-} while (0)
-
-#define COPY_CHAR(value, dst) do {\
-    int result = put_user((value), (dst));\
-    if (result) {\
-        return result;\
-    }\
-} while (0)
 
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
 static int     dev_open(struct inode *, struct file *);
@@ -49,7 +34,7 @@ static ssize_t
 dev_read(struct file *fp, char *buf, size_t n, loff_t *of) {
     uwu_state* state = fp->private_data;
 
-    int result = write_chars(state, buf, n);
+    int result = uwu_write_chars(state, buf, n);
     if (result < 0) return result;
 
     return n;

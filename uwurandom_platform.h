@@ -5,6 +5,7 @@
 
 #include <linux/kernel.h>
 #include <linux/random.h>
+#include <linux/uaccess.h>
 
 #else
 
