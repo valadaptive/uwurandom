@@ -18,6 +18,7 @@ MODULE_AUTHOR("valadaptive");
 MODULE_VERSION("0.1");
 
 #define COPY_STR(dst, src, len) copy_to_user((dst), (src), (len))
+#define COPY_CHAR(value, dst) put_user((value), (dst))
 
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
 static int     dev_open(struct inode *, struct file *);
@@ -265,7 +266,7 @@ static int exec_op(uwu_state* state, char* buf, size_t len) {
             int i;
             for (i = 0; i < num_chars_to_copy; i++) {
                 uwu_markov_ngram ngram = ngrams[ngram_index];
-                int result = COPY_STR(buf + i, &ngram.character, 1);
+                int result = COPY_CHAR(ngram.character, buf + i);
                 if (result) return -EFAULT;
                 unsigned int random = uwu_random_int(state);
                 random %= ngram.total_probability;
@@ -295,7 +296,7 @@ static int exec_op(uwu_state* state, char* buf, size_t len) {
                     // Out of characters. Return the number of characters thus written.
                     return i;
                 }
-                int result = COPY_STR(buf + i, c, 1);
+                int result = COPY_CHAR(*c, buf + i);
                 if (result) return -EFAULT;
                 op->state.repeat_character.remaining_chars--;
             }
@@ -314,7 +315,7 @@ static int write_chars(uwu_state* state, char* buf, size_t n) {
     size_t total_written = 0;
     while (total_written < n) {
         if (state->print_space) {
-            int result = COPY_STR(buf + total_written, &SPACE, 1);
+            int result = COPY_CHAR(SPACE, buf + total_written);
             if (result) return -EFAULT;
             total_written++;
             state->print_space = false;
