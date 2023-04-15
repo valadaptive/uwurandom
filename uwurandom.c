@@ -308,14 +308,12 @@ static int exec_op(uwu_state* state, char* buf, size_t len) {
     }
 }
 
-static const char SPACE = ' ';
-
 // Fill the given buffer with UwU
 static int write_chars(uwu_state* state, char* buf, size_t n) {
     size_t total_written = 0;
     while (total_written < n) {
         if (state->print_space) {
-            int result = COPY_CHAR(SPACE, buf + total_written);
+            int result = COPY_CHAR(' ', buf + total_written);
             if (result) return -EFAULT;
             total_written++;
             state->print_space = false;
