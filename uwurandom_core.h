@@ -75,7 +75,10 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
             char* string = op->state.print_string.string;
             size_t remaining = op->state.print_string.remaining_chars;
 
-            if (remaining == 0) return 0;
+            if (remaining == 0) {
+                state->current_op--;
+                return 0;
+            }
 
             size_t num_chars_to_copy = remaining > len ? len : remaining;
 
@@ -93,6 +96,11 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
             uwu_markov_table* table = op->state.markov.ngrams;
             uwu_markov_ngram* ngrams = table->ngrams;
             size_t remaining = op->state.markov.remaining_chars;
+
+            if (remaining == 0) {
+                state->current_op--;
+                return 0;
+            }
 
             size_t num_chars_to_copy = remaining > len ? len : remaining;
 
@@ -117,15 +125,16 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
                 if (ngram_char < 0) {
                     ssize_t special_idx = -1 - ngram_char;
                     table->specials[special_idx](state);
+                    break;
                 } else {
                     COPY_CHAR(ngram_char, buf + i);
                 }
             }
 
             op->state.markov.prev_ngram = ngram_index;
-            op->state.markov.remaining_chars -= num_chars_to_copy;
+            op->state.markov.remaining_chars -= i;
 
-            return num_chars_to_copy;
+            return i;
         }
 
         case UWU_REPEAT_CHARACTER: {
@@ -134,6 +143,7 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
             for (i = 0; i < len; i++) {
                 if (op->state.repeat_character.remaining_chars == 0) {
                     // Out of characters. Return the number of characters thus written.
+                    state->current_op--;
                     return i;
                 }
                 COPY_CHAR(c, buf + i);
@@ -160,16 +170,13 @@ static int uwu_write_chars(uwu_state* state, char* buf, size_t n) {
         size_t chars_written = uwu_exec_op(state, buf + total_written, n - total_written);
         if (chars_written < 0) return chars_written;
 
-        if (chars_written == 0) {
-            state->current_op--;
-            if (state->current_op == -1) {
-                // regenerate ops
-                generate_new_ops(state);
-                state->print_space = true;
-            }
-        } else {
-            total_written += chars_written;
+        if (state->current_op == -1) {
+            // regenerate ops
+            generate_new_ops(state);
+            state->print_space = true;
         }
+
+        total_written += chars_written;
     }
     return 0;
 }
