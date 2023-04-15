@@ -1,5 +1,4 @@
-const { table } = require('console');
-const util = require('util');
+const fs = require('fs');
 
 // An array maps indices to values. Inverting it means returning a map of values to indices.
 const invertArray = arr => {
@@ -182,7 +181,7 @@ ${choiceDefs.join(',\n')}
 };`
         );
 
-        ngramDefs.push(`    {.choices = ${listName}, .total_probability = ${totalProbability}}${i === table.length - 1 ? '' : ','} // ${ngrams.values[i]}`);
+        ngramDefs.push(`    {.choices = ${listName}, .total_probability = ${totalProbability}}${i === table.length - 1 ? '' : ','} // "${ngrams.values[i]}"`);
     }
 
     const code =
@@ -260,6 +259,21 @@ for (let i = 0; i < 1000; i++) {
 }
 console.timeEnd('from array');*/
 
-console.log(markovArrToC(catgirlTable, 'catnonsense'));
-console.log(markovArrToC(keysmashTable, 'keysmash'));
-console.log(markovArrToC(scrunklyTable, 'scrunkly'));
+const markovArrays = [
+    markovArrToC(catgirlTable, 'catnonsense'),
+    markovArrToC(keysmashTable, 'keysmash'),
+    markovArrToC(scrunklyTable, 'scrunkly')
+];
+
+const markovSource =
+`#ifndef _UWURANDOM_MARKOV_DATA_H
+#define _UWURANDOM_MARKOV_DATA_H
+
+#include "uwurandom_types.h"
+
+${markovArrays.join('\n')}
+
+#endif
+`
+
+fs.writeFileSync('uwurandom_markov_data.h', markovSource, {encoding: 'utf-8'});
