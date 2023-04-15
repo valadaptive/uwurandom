@@ -50,7 +50,7 @@ uwu_push_op(uwu_state* state, uwu_op op) {
 // Pick a random program from the list of programs and write it to the ops list
 static void
 generate_new_ops(uwu_state* state) {
-    unsigned int op_idx = uwu_random_int(state);
+    uwu_random_number op_idx = uwu_random_int(state);
 
     if (state->prev_op == -1) {
         op_idx %= state->num_ops;
@@ -107,7 +107,7 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
             int i;
             for (i = 0; i < num_chars_to_copy; i++) {
                 uwu_markov_ngram ngram = ngrams[ngram_index];
-                unsigned int random = uwu_random_int(state);
+                uwu_random_number random = uwu_random_int(state);
                 random %= ngram.total_probability;
                 int j = 0;
                 while (true) {

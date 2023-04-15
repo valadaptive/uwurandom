@@ -21,12 +21,12 @@
 #ifdef __KERNEL__
 
 const size_t RAND_SIZE = 128;
-static unsigned int uwu_random_int(uwu_state* state) {
+static uwu_random_number uwu_random_int(uwu_state* state) {
     if (state->rng_idx >= RAND_SIZE) {
-        get_random_bytes(state->rng_buf, RAND_SIZE * sizeof(unsigned int));
+        get_random_bytes(state->rng_buf, RAND_SIZE * sizeof(uwu_random_number));
         state->rng_idx = 0;
     }
-    unsigned int rand_value = state->rng_buf[state->rng_idx];
+    uwu_random_number rand_value = state->rng_buf[state->rng_idx];
     state->rng_idx++;
     return rand_value;
 }
@@ -51,12 +51,12 @@ static unsigned int uwu_random_int(uwu_state* state) {
 #include <string.h>
 
 const size_t RAND_SIZE = 128;
-static unsigned int uwu_random_int(uwu_state* state) {
+static uwu_random_number uwu_random_int(uwu_state* state) {
     if (state->rng_idx >= RAND_SIZE) {
-        getrandom(state->rng_buf, RAND_SIZE * sizeof(unsigned int), 0);
+        getrandom(state->rng_buf, RAND_SIZE * sizeof(uwu_random_number), 0);
         state->rng_idx = 0;
     }
-    unsigned int rand_value = state->rng_buf[state->rng_idx];
+    uwu_random_number rand_value = state->rng_buf[state->rng_idx];
     state->rng_idx++;
     return rand_value;
 }

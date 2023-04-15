@@ -51,7 +51,7 @@ dev_open(struct inode *ino, struct file *fp) {
         return -ENOMEM;
     }
 
-    unsigned int* rng_buf = kmalloc(RAND_SIZE * sizeof(unsigned int), GFP_KERNEL);
+    uwu_random_number* rng_buf = kmalloc(RAND_SIZE * sizeof(uwu_random_number), GFP_KERNEL);
 
     if (rng_buf == NULL) {
         kfree(data);

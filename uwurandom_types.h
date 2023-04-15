@@ -3,6 +3,8 @@
 
 #include <linux/types.h>
 
+typedef unsigned int uwu_random_number;
+
 typedef struct uwu_markov_choice uwu_markov_choice;
 struct uwu_markov_choice {
     size_t next_ngram;
@@ -79,7 +81,7 @@ struct uwu_state {
     ssize_t current_op;
     int prev_op;
     bool print_space;
-    unsigned int* rng_buf;
+    uwu_random_number* rng_buf;
     size_t rng_idx;
 };
 

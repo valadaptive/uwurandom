@@ -24,7 +24,7 @@ int main() {
         return -ENOMEM;
     }
 
-    unsigned int* rng_buf = malloc(RAND_SIZE * sizeof(unsigned int));
+    uwu_random_number* rng_buf = malloc(RAND_SIZE * sizeof(uwu_random_number));
 
     if (rng_buf == NULL) {
         free(data);
