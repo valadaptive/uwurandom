@@ -80,7 +80,6 @@ const generateMarkov = (strings, order = 2) => {
             totalProbability += probability;
             probsArr.push({
                 nextNgram: ngramIndices[nextNgram],
-                nextChar,
                 probability
             });
         }
@@ -105,7 +104,7 @@ const generateMarkov = (strings, order = 2) => {
             totalProbability /= probGCD;
         }
 
-        markovArr.push({choices: probsArr, totalProbability});
+        markovArr.push({choices: probsArr, totalProbability, character: ngram[ngram.length - 1]});
     }
 
     return {
@@ -145,13 +144,13 @@ const generateFromArray = ({markovArr: table, ngrams}, len, start) => {
     let ngram = ngrams.indices[start];
 
     while (generated.length < len) {
-        const {choices, totalProbability} = table[ngram];
+        const {choices, totalProbability, character} = table[ngram];
+        generated += character;
         const random = Math.floor(Math.random() * totalProbability);
         for (let i = 0; i < choices.length; i++) {
-            const {nextChar, nextNgram, cumulativeProbability} = choices[i];
+            const {nextNgram, cumulativeProbability} = choices[i];
             if (random < cumulativeProbability) {
                 ngram = nextNgram;
-                generated += nextChar;
                 break;
             }
         }
@@ -166,12 +165,12 @@ const markovArrToC = ({markovArr: table, ngrams}, name) => {
 
     for (let i = 0; i < table.length; i++) {
         const listName = `${name}_ngram${i}_choices`;
-        const {choices, totalProbability} = table[i];
+        const {choices, totalProbability, character} = table[i];
         const choiceDefs = [];
         for (let i = 0; i < choices.length; i++) {
-            const {nextChar, nextNgram, cumulativeProbability} = choices[i];
+            const {nextNgram, cumulativeProbability} = choices[i];
             choiceDefs.push(
-`    {.next_ngram = ${nextNgram}, .cumulative_probability = ${cumulativeProbability}, .next_char = '${nextChar}'}`
+`    {.next_ngram = ${nextNgram}, .cumulative_probability = ${cumulativeProbability}}`
 );
         }
 
@@ -181,7 +180,7 @@ ${choiceDefs.join(',\n')}
 };`
         );
 
-        ngramDefs.push(`    {.choices = ${listName}, .total_probability = ${totalProbability}}${i === table.length - 1 ? '' : ','} // "${ngrams.values[i]}"`);
+        ngramDefs.push(`    {.choices = ${listName}, .total_probability = ${totalProbability}, .character = '${character}'}${i === table.length - 1 ? '' : ','} // "${ngrams.values[i]}"`);
     }
 
     const code =
@@ -245,9 +244,9 @@ const catgirlTable = generateMarkov(catgirlNonsense.split('\n'), 2)
 const keysmashTable = generateMarkov(keysmash, 1);
 const scrunklyTable = generateMarkov(scrunks, 2);
 
-/*console.log(generateFromArray(catgirlTable, 100, 'ny'));
+console.log(generateFromArray(catgirlTable, 100, 'ny'));
 
-console.time('from table');
+/*console.time('from table');
 for (let i = 0; i < 1000; i++) {
     generateFromTable(catgirlTable, 1000, 'ny');
 }

@@ -265,6 +265,8 @@ static int exec_op(uwu_state* state, char* buf, size_t len) {
             int i;
             for (i = 0; i < num_chars_to_copy; i++) {
                 uwu_markov_ngram ngram = ngrams[ngram_index];
+                int result = COPY_STR(buf + i, &ngram.character, 1);
+                if (result) return -EFAULT;
                 unsigned int random = uwu_random_int(state);
                 random %= ngram.total_probability;
                 int j = 0;
@@ -273,8 +275,6 @@ static int exec_op(uwu_state* state, char* buf, size_t len) {
                     size_t cumulative_probability = choice.cumulative_probability;
                     if (random < cumulative_probability) {
                         ngram_index = choice.next_ngram;
-                        int result = COPY_STR(buf + i, &choice.next_char, 1);
-                        if (result) return -EFAULT;
                         break;
                     }
                     j++;
