@@ -109,8 +109,14 @@ kinit(void) {
 
     dev_num = MKDEV(major, 0);
 
-    // Create device class and device automatically. So nice!
+    // Module pointer parameter removed in kernel version 6.4
+    // https://lore.kernel.org/all/20230313181843.1207845-4-gregkh@linuxfoundation.org/
+    #if ( LINUX_VERSION_CODE >= KERNEL_VERSION(6,4,0) )
+    dev_class = class_create("uwurandom");
+    #else
     dev_class = class_create(THIS_MODULE, "uwurandom");
+    #endif
+
     if (IS_ERR(dev_class)) {
         unregister_chrdev(major, "uwurandom");
         return PTR_ERR(dev_class);
