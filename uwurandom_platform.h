@@ -10,9 +10,9 @@
 #else
 
 #include <stddef.h>
-#include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #endif // __KERNEL__
 

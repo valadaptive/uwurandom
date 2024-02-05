@@ -1,7 +1,17 @@
 #ifndef _UWURANDOM_TYPES_H
 #define _UWURANDOM_TYPES_H
 
+#ifdef __KERNEL__
 #include <linux/types.h>
+
+#define UINT64_C U64_C
+
+#else
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <sys/types.h>
+#endif
 
 typedef uint32_t uwu_random_number;
 
@@ -13,6 +23,7 @@ struct uwu_markov_choice {
 
 typedef struct {
     uwu_markov_choice* choices;
+    uint32_t modulo_magic;
     uint16_t total_probability;
     char character;
 } uwu_markov_ngram;
