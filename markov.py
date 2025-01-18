@@ -71,41 +71,48 @@ class MarkovTable(Generic[T]):
     def to_c(self, prefix: str, initial_ngram: Optional[Tuple[T, ...]] = None, specials: Optional[str] = None) -> str:
         markov_table, ngram_indices = self.to_table()
 
-        choice_defs = []
-        ngram_defs = ["""static uwu_markov_table {prefix}_ngrams = {{
+        choice_defs = ["static uwu_markov_choice {prefix}_choices[] = {{".format(prefix=prefix)]
+        ngram_defs = ["static uwu_markov_ngram {prefix}_ngrams[] = {{".format(prefix=prefix)]
+
+        table_def = """static uwu_markov_table {prefix}_table = {{
     .specials = {specials},
     .initial_ngram={initial_ngram},
     .num_ngrams={num_ngrams},
-    .ngrams = {{""".format(
+    .choices={prefix}_choices,
+    .ngrams={prefix}_ngrams
+}};""".format(
             prefix=prefix,
             specials=specials if specials is not None else 'NULL',
             initial_ngram=ngram_indices[initial_ngram] if initial_ngram is not None else -1,
             num_ngrams=len(markov_table)
-    )]
+    )
 
+        choice_table_index = 0
         for ngram_index, ngram in enumerate(markov_table):
-            choice_defs.append(f'static uwu_markov_choice {prefix}_ngram{ngram_index}_choices[] = {{')
+            choice_defs.append('    // ngram {index} {chars}'.format(index=ngram_index, chars=ngram.chars))
             for choice_index, choice in enumerate(ngram.choices):
-                choice_defs.append('    {{.next_ngram = {next_ngram}, .cumulative_probability = {cumulative_probability}}}{comma}'.format(
+                choice_defs.append('    {{.next_ngram = {next_ngram}, .cumulative_probability = {cumulative_probability}}},'.format(
                     next_ngram=choice.next_ngram,
                     cumulative_probability=choice.cumulative_probability,
-                    comma='' if choice_index == len(ngram.choices) - 1 else ','
+                    comma='' if choice_index == len(ngram.choices) - 1 and ngram_index == len(markov_table) - 1 else ','
                 ))
-            choice_defs.append(f'}};')
 
             last_char = ngram.chars[-1]
 
-            ngram_defs.append('        {{.choices = {prefix}_ngram{index}_choices, .total_probability = {total_probability}, .character = {character}}}, // "{chars}"'.format(
+            ngram_defs.append('    {{.choices = {index}, .total_probability = {total_probability}, .character = {character}}}, // "{chars}"'.format(
                 prefix=prefix,
-                index=ngram_index,
+                index=choice_table_index,
                 total_probability=ngram.total_probability,
                 character=last_char.value if isinstance(last_char, SpecialMarkov) else f"'{last_char}'",
                 chars=ngram.chars
             ))
 
-        ngram_defs.append('    }\n};')
+            choice_table_index += len(ngram.choices)
 
-        return '{choices}\n\n{ngrams}'.format(choices='\n'.join(choice_defs), ngrams='\n'.join(ngram_defs))
+        ngram_defs.append('};')
+        choice_defs.append('};')
+
+        return '{choices}\n\n{ngrams}\n\n{table_def}'.format(choices='\n'.join(choice_defs), ngrams='\n'.join(ngram_defs), table_def=table_def)
 
 
 catgirl_nonsense = [list(s) for s in """mraowmraowmewmraowmrrppurrrrmraownyanyamraowwwwwmrwmraowmreowmewmrowmraowmewmraownya
@@ -150,4 +157,3 @@ with open('uwurandom_markov_data.h', 'w', encoding='utf-8') as f:
     f.write('\n\n')
     f.write(scrunkly_table.to_c('scrunkly', ('a', 'w'), 'scrunkly_specials'))
     f.write("\n\n#endif\n")
-

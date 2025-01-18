@@ -22,7 +22,7 @@ struct uwu_markov_choice {
 };
 
 typedef struct {
-    uwu_markov_choice* choices;
+    uint16_t choices;
     uint16_t total_probability;
     char character;
 } uwu_markov_ngram;
@@ -34,7 +34,8 @@ typedef struct {
     uwu_op_factory** specials;
     ssize_t initial_ngram;
     size_t num_ngrams;
-    uwu_markov_ngram ngrams[];
+    uwu_markov_choice* choices;
+    uwu_markov_ngram* ngrams;
 } uwu_markov_table;
 
 // Stores the state for a Markov chain operation.

@@ -98,6 +98,7 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
             size_t ngram_index = op->state.markov.prev_ngram;
             uwu_markov_table* table = op->state.markov.ngrams;
             uwu_markov_ngram* ngrams = table->ngrams;
+            uwu_markov_choice* choices = table->choices;
             size_t remaining = op->state.markov.remaining_chars;
 
             if (remaining == 0) {
@@ -114,7 +115,7 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
                 random %= ngram.total_probability;
                 int j = 0;
                 while (true) {
-                    uwu_markov_choice choice = ngram.choices[j];
+                    uwu_markov_choice choice = choices[ngram.choices + j];
                     size_t cumulative_probability = choice.cumulative_probability;
                     if (random < cumulative_probability) {
                         ngram_index = choice.next_ngram;
