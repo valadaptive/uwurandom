@@ -53,3 +53,9 @@ If things are a bit too silly and you want to un-load the kernel module, run:
 ```
 sudo rmmod uwurandom
 ```
+
+Or, if you're boring and don't want to load an entire kernel module for generating catgirl keyboard mashing, you can compile the userspace version:
+
+```
+clang -O3 uwurandom_user.c -o uwurandom
+```

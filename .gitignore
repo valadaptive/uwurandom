@@ -4,6 +4,7 @@
 *.mod.c
 .vscode/*
 *.cmd
+uwurandom
 Module.symvers
 modules.order
 .cache
