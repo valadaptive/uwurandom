@@ -127,7 +127,7 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
                 char ngram_char = ngram.character;
 
                 if (ngram_char < 0) {
-                    ssize_t special_idx = -1 - ngram_char;
+                    size_t special_idx = -1 - ngram_char;
                     table->specials[special_idx](state);
                     break;
                 } else {

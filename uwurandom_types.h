@@ -4,13 +4,10 @@
 #ifdef __KERNEL__
 #include <linux/types.h>
 
-#define UINT64_C U64_C
-
 #else
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <sys/types.h>
 #endif
 
 typedef uint32_t uwu_random_number;
@@ -32,8 +29,8 @@ typedef void uwu_op_factory(uwu_state* state);
 
 typedef struct {
     uwu_op_factory** specials;
-    ssize_t initial_ngram;
-    size_t num_ngrams;
+    int32_t initial_ngram;
+    uint32_t num_ngrams;
     const uwu_markov_choice* choices;
     const uwu_markov_ngram* ngrams;
 } uwu_markov_table;
@@ -86,11 +83,12 @@ typedef struct {
 
 struct uwu_state {
     uwu_op_factory** ops_table;
-    size_t num_ops;
+    int32_t num_ops;
+    int32_t prev_op;
 
     uwu_op ops[MAX_OPS];
-    ssize_t current_op;
-    int prev_op;
+    int8_t current_op;
+
     uwu_random_number* rng_buf;
     size_t rng_idx;
 };
