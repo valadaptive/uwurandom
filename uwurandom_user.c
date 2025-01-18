@@ -15,8 +15,8 @@ static void sig_handler(int _) {
 
 #define BUF_SIZE 8192
 
-int main() {
-    uwu_state data = {};
+int main(void) {
+    uwu_state data = {0};
 
     int init_err = uwu_init_state(&data, uwu_op_table_default, ARRAY_SIZE(uwu_op_table_default));
 

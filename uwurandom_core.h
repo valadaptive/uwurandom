@@ -57,7 +57,7 @@ generate_new_ops(uwu_state* state) {
     } else {
         // don't repeat previous op
         op_idx %= state->num_ops - 1;
-        if (op_idx >= state->prev_op) {
+        if (op_idx >= (unsigned int)state->prev_op) {
             op_idx += 1;
         }
     }
@@ -108,7 +108,7 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
 
             size_t num_chars_to_copy = remaining > len ? len : remaining;
 
-            int i;
+            size_t i;
             for (i = 0; i < num_chars_to_copy; i++) {
                 uwu_markov_ngram ngram = ngrams[ngram_index];
                 uwu_random_number random = uwu_random_int(state);
@@ -143,7 +143,7 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
 
         case UWU_REPEAT_CHARACTER: {
             char c = op->state.repeat_character.character;
-            int i;
+            size_t i;
             for (i = 0; i < len; i++) {
                 if (op->state.repeat_character.remaining_chars == 0) {
                     // Out of characters. Return the number of characters thus written.
