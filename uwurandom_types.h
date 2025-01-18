@@ -17,13 +17,12 @@ typedef uint32_t uwu_random_number;
 
 typedef struct uwu_markov_choice uwu_markov_choice;
 struct uwu_markov_choice {
-    size_t next_ngram;
+    uint16_t next_ngram;
     uint16_t cumulative_probability;
 };
 
 typedef struct {
     uwu_markov_choice* choices;
-    uint32_t modulo_magic;
     uint16_t total_probability;
     char character;
 } uwu_markov_ngram;
