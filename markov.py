@@ -71,10 +71,10 @@ class MarkovTable(Generic[T]):
     def to_c(self, prefix: str, initial_ngram: Optional[Tuple[T, ...]] = None, specials: Optional[str] = None) -> str:
         markov_table, ngram_indices = self.to_table()
 
-        choice_defs = ["static uwu_markov_choice {prefix}_choices[] = {{".format(prefix=prefix)]
-        ngram_defs = ["static uwu_markov_ngram {prefix}_ngrams[] = {{".format(prefix=prefix)]
+        choice_defs = ["static const uwu_markov_choice {prefix}_choices[] = {{".format(prefix=prefix)]
+        ngram_defs = ["static const uwu_markov_ngram {prefix}_ngrams[] = {{".format(prefix=prefix)]
 
-        table_def = """static uwu_markov_table {prefix}_table = {{
+        table_def = """static const uwu_markov_table {prefix}_table = {{
     .specials = {specials},
     .initial_ngram={initial_ngram},
     .num_ngrams={num_ngrams},

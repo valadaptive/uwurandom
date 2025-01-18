@@ -96,9 +96,9 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
 
         case UWU_MARKOV: {
             size_t ngram_index = op->state.markov.prev_ngram;
-            uwu_markov_table* table = op->state.markov.ngrams;
-            uwu_markov_ngram* ngrams = table->ngrams;
-            uwu_markov_choice* choices = table->choices;
+            const uwu_markov_table* table = op->state.markov.ngrams;
+            const uwu_markov_ngram* ngrams = table->ngrams;
+            const uwu_markov_choice* choices = table->choices;
             size_t remaining = op->state.markov.remaining_chars;
 
             if (remaining == 0) {

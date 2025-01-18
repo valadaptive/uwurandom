@@ -34,15 +34,15 @@ typedef struct {
     uwu_op_factory** specials;
     ssize_t initial_ngram;
     size_t num_ngrams;
-    uwu_markov_choice* choices;
-    uwu_markov_ngram* ngrams;
+    const uwu_markov_choice* choices;
+    const uwu_markov_ngram* ngrams;
 } uwu_markov_table;
 
 // Stores the state for a Markov chain operation.
 typedef struct {
     size_t prev_ngram; /* previous ngram */
     size_t remaining_chars; /* number of remaining characters */
-    uwu_markov_table* ngrams /* ngram table */;
+    const uwu_markov_table* ngrams /* ngram table */;
 } uwu_markov_state;
 
 // Stores the state for a "print string" operation.

@@ -4,7 +4,7 @@
 #include "uwurandom_types.h"
 #include "uwurandom_markov_special.h"
 
-static uwu_markov_choice catnonsense_choices[] = {
+static const uwu_markov_choice catnonsense_choices[] = {
     // ngram 0 ('m', 'r')
     {.next_ngram = 22, .cumulative_probability = 15},
     {.next_ngram = 1, .cumulative_probability = 24},
@@ -83,7 +83,7 @@ static uwu_markov_choice catnonsense_choices[] = {
     {.next_ngram = 14, .cumulative_probability = 3},
 };
 
-static uwu_markov_ngram catnonsense_ngrams[] = {
+static const uwu_markov_ngram catnonsense_ngrams[] = {
     {.choices = 0, .total_probability = 30, .character = 'r'}, // "('m', 'r')"
     {.choices = 5, .total_probability = 9, .character = 'a'}, // "('r', 'a')"
     {.choices = 6, .total_probability = 9, .character = 'o'}, // "('a', 'o')"
@@ -113,7 +113,7 @@ static uwu_markov_ngram catnonsense_ngrams[] = {
     {.choices = 48, .total_probability = 3, .character = 'n'}, // "('r', 'n')"
 };
 
-static uwu_markov_table catnonsense_table = {
+static const uwu_markov_table catnonsense_table = {
     .specials = NULL,
     .initial_ngram=0,
     .num_ngrams=27,
@@ -121,7 +121,7 @@ static uwu_markov_table catnonsense_table = {
     .ngrams=catnonsense_ngrams
 };
 
-static uwu_markov_choice keysmash_choices[] = {
+static const uwu_markov_choice keysmash_choices[] = {
     // ngram 0 ('a',)
     {.next_ngram = 5, .cumulative_probability = 7},
     {.next_ngram = 9, .cumulative_probability = 13},
@@ -236,7 +236,7 @@ static uwu_markov_choice keysmash_choices[] = {
     {.next_ngram = 8, .cumulative_probability = 1},
 };
 
-static uwu_markov_ngram keysmash_ngrams[] = {
+static const uwu_markov_ngram keysmash_ngrams[] = {
     {.choices = 0, .total_probability = 30, .character = 'a'}, // "('a',)"
     {.choices = 9, .total_probability = 11, .character = 'l'}, // "('l',)"
     {.choices = 16, .total_probability = 20, .character = 'k'}, // "('k',)"
@@ -256,7 +256,7 @@ static uwu_markov_ngram keysmash_ngrams[] = {
     {.choices = 94, .total_probability = 1, .character = 'o'}, // "('o',)"
 };
 
-static uwu_markov_table keysmash_table = {
+static const uwu_markov_table keysmash_table = {
     .specials = NULL,
     .initial_ngram=-1,
     .num_ngrams=17,
@@ -264,7 +264,7 @@ static uwu_markov_table keysmash_table = {
     .ngrams=keysmash_ngrams
 };
 
-static uwu_markov_choice scrunkly_choices[] = {
+static const uwu_markov_choice scrunkly_choices[] = {
     // ngram 0 ('t', 'h')
     {.next_ngram = 1, .cumulative_probability = 15},
     {.next_ngram = 67, .cumulative_probability = 16},
@@ -776,7 +776,7 @@ static uwu_markov_choice scrunkly_choices[] = {
     {.next_ngram = 167, .cumulative_probability = 1},
 };
 
-static uwu_markov_ngram scrunkly_ngrams[] = {
+static const uwu_markov_ngram scrunkly_ngrams[] = {
     {.choices = 0, .total_probability = 16, .character = 'h'}, // "('t', 'h')"
     {.choices = 2, .total_probability = 18, .character = 'e'}, // "('h', 'e')"
     {.choices = 6, .total_probability = 30, .character = ' '}, // "('e', ' ')"
@@ -953,7 +953,7 @@ static uwu_markov_ngram scrunkly_ngrams[] = {
     {.choices = 334, .total_probability = 1, .character = 'e'}, // "('n', 'e')"
 };
 
-static uwu_markov_table scrunkly_table = {
+static const uwu_markov_table scrunkly_table = {
     .specials = scrunkly_specials,
     .initial_ngram=44,
     .num_ngrams=174,
