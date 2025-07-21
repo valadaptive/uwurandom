@@ -31,3 +31,5 @@ for (let i = 0; i < 100; i++) {
 state.destroy();
 dest.destroy();
 ```
+
+This package also contains an `uwurandom` binary which outputs an endless stream of catgirl nonsense, just like the kernel module and native usermode binary.

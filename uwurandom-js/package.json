@@ -1,10 +1,12 @@
 {
   "name": "uwurandom",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "`/dev/urandom` is made out of cold hard math. Instead, consider using `/dev/uwurandom`, which generates data through a tiny catgirl furiously typing away utter nonsense inside your computer.",
   "main": "dist/uwurandom.mjs",
   "types": "dist/uwurandom.d.mts",
-  "bin": "uwurandom-bin.mjs",
+  "bin": {
+    "uwurandom": "uwurandom-bin.mjs"
+  },
   "files": [
     "dist",
     "uwurandom-bin.mjs"

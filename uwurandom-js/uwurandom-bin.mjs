@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import {UwurandomState, DestBuffer} from './dist/uwurandom.mjs';
 
 const state = new UwurandomState();
