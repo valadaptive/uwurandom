@@ -1,0 +1,32 @@
+{
+  "name": "uwurandom",
+  "version": "0.0.1",
+  "description": "`/dev/urandom` is made out of cold hard math. Instead, consider using `/dev/uwurandom`, which generates data through a tiny catgirl furiously typing away utter nonsense inside your computer.",
+  "main": "dist/uwurandom.mjs",
+  "types": "dist/uwurandom.d.mts",
+  "bin": "uwurandom-bin.mjs",
+  "files": [
+    "dist",
+    "uwurandom-bin.mjs"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "cd .. && make js",
+    "prepack": "cd .. && make js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valadaptive/uwurandom.git",
+    "directory": "uwurandom-js"
+  },
+  "keywords": ["catgirl", "uwu", "random"],
+  "author": "valadaptive",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valadaptive/uwurandom/issues"
+  },
+  "homepage": "https://github.com/valadaptive/uwurandom#readme",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

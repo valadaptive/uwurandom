@@ -5,6 +5,7 @@
 .vscode/*
 *.cmd
 uwurandom
+uwurandom.wasm
 Module.symvers
 modules.order
 .cache

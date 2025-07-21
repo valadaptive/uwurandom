@@ -28,9 +28,9 @@ sudo pacman -S linux-headers
 
 (or `linux-lts-headers` if you're using the `linux-lts` kernel)
 
-Once you've installed the kernel headers, you should be able to simply run `make` to build the kernel module:
+Once you've installed the kernel headers, you should be able to run `make kernel` to build the kernel module:
 ```bash
-make
+make kernel
 ```
 
 ### Usage
@@ -50,12 +50,12 @@ and witness its sheer glory with your own eyes.
 
 If things are a bit too silly and you want to un-load the kernel module, run:
 
-```
+```bash
 sudo rmmod uwurandom
 ```
 
 Or, if you're boring and don't want to load an entire kernel module for generating catgirl keyboard mashing, you can compile the userspace version:
 
-```
-clang -O3 uwurandom_user.c -o uwurandom
+```bash
+make usermode
 ```
