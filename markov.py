@@ -49,6 +49,8 @@ class MarkovTable(Generic[T]):
         for index, (ngram, probabilities) in enumerate(sorted_entries.items()):
 
             total_probability = sum(probabilities.values())
+            if total_probability > 255:
+                raise OverflowError('Total probability overflows a uint8')
             # sort by probability in descending order to minimize linear search steps
             next_chars = sorted(probabilities.items(), key=lambda p: p[1], reverse=True)
 
@@ -61,6 +63,10 @@ class MarkovTable(Generic[T]):
 
                 cumulative_probability += probability
                 next_ngram_index = ngram_indices[next_ngram]
+                if next_ngram_index > 255:
+                    raise OverflowError('Ngram index overflows a uint8')
+                if cumulative_probability > 255:
+                    raise OverflowError('Probability overflows a uint8')
                 choice = NgramChoice(next_ngram_index, cumulative_probability)
                 choices.append(choice)
 
