@@ -6,6 +6,7 @@
 *.cmd
 uwurandom
 uwurandom.wasm
+libuwurandom.so
 Module.symvers
 modules.order
 .cache

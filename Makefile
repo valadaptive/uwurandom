@@ -4,6 +4,7 @@ EXTRA_CFLAGS += -I`pwd` -Wno-declaration-after-statement
 
 usermode: CFLAGS += -O3 -std=c99
 wasm: CFLAGS += -Oz -std=c99
+sharedlib: CFLAGS += -O3 -std=c99 -fPIC
 
 obj-m += uwurandom.o
 
@@ -30,3 +31,11 @@ js: wasm
 
 clean-js: clean-wasm
 	cd uwurandom-js && $(MAKE) clean
+
+sharedlib:
+	$(CC) $(CFLAGS) -shared -o libuwurandom.so uwurandom_lib.c
+
+clean-sharedlib:
+	rm -f libuwurandom.so
+
+clean: clean-usermode clean-wasm clean-js clean-sharedlib clean-kernel
