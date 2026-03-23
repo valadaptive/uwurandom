@@ -11,6 +11,7 @@
 #endif
 
 typedef uint32_t uwu_random_number;
+const uwu_random_number UWU_RAND_MAX = UINT32_MAX;
 
 typedef struct uwu_markov_choice uwu_markov_choice;
 struct uwu_markov_choice {
@@ -37,14 +38,14 @@ typedef struct {
 
 // Stores the state for a Markov chain operation.
 typedef struct {
-    size_t prev_ngram; /* previous ngram */
-    size_t remaining_chars; /* number of remaining characters */
+    uint32_t prev_ngram; /* previous ngram */
+    uint32_t remaining_chars; /* number of remaining characters */
     const uwu_markov_table* ngrams /* ngram table */;
 } uwu_markov_state;
 
 // Stores the state for a "print string" operation.
 typedef struct {
-    char* string; /* pointer to string */
+    const char* string; /* pointer to string */
     size_t remaining_chars; /* number of remaining characters */
 } uwu_print_string_state;
 
@@ -53,6 +54,12 @@ typedef struct {
     char character;
     size_t remaining_chars; /* number of remaining times to repeat the character */
 } uwu_repeat_character_state;
+
+// Stores the state for a recursive operation.
+typedef struct {
+    uwu_op_factory* factory;
+    size_t remaining_iterations; /* number of remaining times to call the op factory */
+} uwu_generate_state;
 
 // Because we're asked to read a certain amount of data at a time, and we
 // can't control what that amount is, we need a way to store what we're
@@ -66,12 +73,17 @@ typedef union {
     uwu_markov_state markov;
     uwu_print_string_state print_string;
     uwu_repeat_character_state repeat_character;
+    uwu_generate_state generate;
+    uwu_generate_state apply;
+    struct uwu_nothing {} nothing;
 } uwu_op_state;
 
 typedef enum {
     UWU_MARKOV,
     UWU_PRINT_STRING,
-    UWU_REPEAT_CHARACTER
+    UWU_REPEAT_CHARACTER,
+    UWU_GENERATE,
+    UWU_CAPITALIZE_NEXT,
 } UWU_OPCODE;
 
 typedef struct {
@@ -79,15 +91,18 @@ typedef struct {
     uwu_op_state state;
 } uwu_op;
 
-#define MAX_OPS 6
+#define MAX_OPS 128
 
 struct uwu_state {
     uwu_op_factory** ops_table;
     int32_t num_ops;
     int32_t prev_op;
 
-    uwu_op ops[MAX_OPS];
+    UWU_OPCODE opcodes[MAX_OPS];
+    uwu_op_state op_states[MAX_OPS];
+    uint32_t side_data[MAX_OPS];
     int8_t current_op;
+    bool capitalize_next;
 
     uwu_random_number* rng_buf;
     size_t rng_idx;
@@ -98,6 +113,6 @@ typedef struct {
     char* string;
 } string_with_len;
 
-#define STRING_WITH_LEN(literal) {.len = (sizeof(literal) - 1), .string = literal}
+#define STRING_WITH_LEN(literal) (string_with_len){.len = (sizeof(literal) - 1), .string = literal}
 
 #endif

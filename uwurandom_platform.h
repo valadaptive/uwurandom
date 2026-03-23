@@ -1,76 +1,17 @@
 #ifndef _UWURANDOM_PLATFORM_H
 #define _UWURANDOM_PLATFORM_H
 
-#ifdef __KERNEL__
-
-#include <linux/kernel.h>
-#include <linux/random.h>
-#include <linux/uaccess.h>
-
-#elif defined(__WASM__)
+#include <math.h>
+#if defined(__WASM__)
 #else
 
 #include <stddef.h>
 #include <stdbool.h>
-#include <errno.h>
 #include <stdlib.h>
 
-#endif // __KERNEL__
+#endif // __WASM__
 
 #include "uwurandom_types.h"
-
-#ifdef __KERNEL__
-
-#define RAND_SIZE 128
-
-static int uwu_init_rng(uwu_state* state) {
-    uwu_random_number* rng_buf = kmalloc(RAND_SIZE * sizeof(uwu_random_number), GFP_KERNEL);
-
-    if (rng_buf == NULL) {
-        return -ENOMEM;
-    }
-
-    state->rng_buf = rng_buf;
-
-    // mark the offset into rng_buf as just past the end of the buffer,
-    // meaning we'll regenerate the buffer the first time we ask for random bytes
-    state->rng_idx = RAND_SIZE;
-
-    return 0;
-}
-
-static void uwu_destroy_rng(uwu_state* state) {
-    if (state->rng_buf) {
-        kfree(state->rng_buf);
-        state->rng_buf = NULL;
-    }
-}
-
-static uwu_random_number uwu_random_int(uwu_state* state) {
-    if (state->rng_idx >= RAND_SIZE) {
-        get_random_bytes(state->rng_buf, RAND_SIZE * sizeof(uwu_random_number));
-        state->rng_idx = 0;
-    }
-    uwu_random_number rand_value = state->rng_buf[state->rng_idx];
-    state->rng_idx++;
-    return rand_value;
-}
-
-#define COPY_STR(dst, src, len) do {\
-    int result = copy_to_user((dst), (src), (len));\
-    if (result) {\
-        return -EFAULT;\
-    }\
-} while (0)
-
-#define COPY_CHAR(value, dst) do {\
-    int result = put_user((value), (dst));\
-    if (result) {\
-        return result;\
-    }\
-} while (0)
-
-#else
 
 #ifdef __WASM__
 __attribute__((import_name("uwuwasm_getrandom"))) void uwuwasm_getrandom(void* buf, size_t len);
@@ -122,6 +63,7 @@ extern void free (void *__ptr);
 
 #include <string.h>
 #include <sys/random.h>
+#include <errno.h>
 #define UWU_GETRANDOM(buf, len) (getrandom((buf), (len), 0))
 
 #define COPY_STR(dst, src, len) do {\
@@ -165,12 +107,27 @@ static uwu_random_number uwu_random_int(uwu_state* state) {
     return rand_value;
 }
 
+/**
+ * @brief Generates a random number from `min` (inclusive) to `max` (exclusive).
+ */
+static inline uwu_random_number uwu_random_range(uwu_state* state, uwu_random_number min, uwu_random_number max) {
+    return (uwu_random_int(state) % (max - min)) + min;
+}
+
+/**
+ * @brief Generates a random number from `min` (inclusive) to `max` (exclusive).
+ */
+static inline uwu_random_number uwu_random_geom(uwu_state* state, double p) {
+    double u = (uwu_random_int(state) + 0.5) / (double)UWU_RAND_MAX;
+    // Hopefully, the inline + multiply-by-reciprocal approach means that `(1.0 / log(1.0 - p))` is evaluated at
+    // compile time.
+    return (uwu_random_number)(log(u) * (1.0 / log(1.0 - p)));
+}
+
 #define COPY_CHAR(value, dst) do {\
     *(dst) = (value);\
 } while (0)
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-
-#endif // __KERNEL__
 
 #endif // _UWURANDOM_PLATFORM_H

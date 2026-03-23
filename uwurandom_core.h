@@ -14,6 +14,16 @@
     }\
 }
 
+#define CREATE_PRINT_STRING_WITH_LEN(printed_string) (uwu_op){\
+    .opcode = UWU_PRINT_STRING,\
+    .state = {\
+        .print_string = {\
+            .string = (printed_string).string,\
+            .remaining_chars = (printed_string).len\
+        }\
+    }\
+}
+
 #define CREATE_REPEAT_CHARACTER(repeated_character, num_repetitions) (uwu_op){\
     .opcode = UWU_REPEAT_CHARACTER,\
     .state = {\
@@ -33,7 +43,41 @@
             .ngrams = &(markov_data)\
         }\
     }\
-}\
+}
+
+#define CREATE_PICK_STRING(actions_table, action_rand) (uwu_op){\
+    .opcode = UWU_PRINT_STRING,\
+    .state = {\
+        .print_string = {\
+            .string = actions_table[action_rand % ARRAY_SIZE(actions_table)].string,\
+            .remaining_chars = actions_table[action_rand % ARRAY_SIZE(actions_table)].len\
+        }\
+    }\
+}
+
+#define CREATE_GENERATE(factory_fn, count) (uwu_op){\
+    .opcode = UWU_GENERATE,\
+    .state = {\
+        .generate = {\
+            .factory = factory_fn,\
+            .remaining_iterations = count\
+        }\
+    }\
+}
+
+#define CREATE_CAPITALIZE_NEXT() (uwu_op){\
+    .opcode = UWU_CAPITALIZE_NEXT,\
+    .state = {\
+        .nothing = {}\
+    }\
+}
+
+static inline void maybe_capitalize(uwu_state* state, char* c) {
+    if (state->capitalize_next && *c >= 'a' && *c <= 'z') {
+        *c &= ~0x20;
+    }
+    state->capitalize_next = false;
+}
 
 static inline int
 uwu_push_op(uwu_state* state, uwu_op op) {
@@ -42,9 +86,22 @@ uwu_push_op(uwu_state* state, uwu_op op) {
     }
 
     state->current_op++;
-    state->ops[state->current_op] = op;
+    state->opcodes[state->current_op] = op.opcode;
+    state->op_states[state->current_op] = op.state;
 
     return 0;
+}
+
+static inline uint32_t* uwu_side_data(uwu_state* state) {
+    return &state->side_data[state->current_op];
+}
+
+static inline void uwu_get_side_data(uwu_state* state, uint8_t op_idx, void* dst) {
+    memcpy(dst, &state->side_data[op_idx], sizeof(uint32_t));
+}
+
+static inline void uwu_set_side_data(uwu_state* state, uint8_t op_idx, const void* src) {
+    memcpy(&state->side_data[op_idx], src, sizeof(uint32_t));
 }
 
 // Pick a random program from the list of programs and write it to the ops list
@@ -65,18 +122,19 @@ generate_new_ops(uwu_state* state) {
     state->prev_op = op_idx;
 
     // print a space after the op is done executing
-    uwu_push_op(state, CREATE_PRINT_STRING(" "));
+    // uwu_push_op(state, CREATE_PRINT_STRING(" "));
 
     state->ops_table[op_idx](state);
 }
 
 // Execute an operation once. Returns the number of characters written, or a negative value on error.
 static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
-    uwu_op* op = &state->ops[state->current_op];
-    switch (op->opcode) {
+    UWU_OPCODE opcode = state->opcodes[state->current_op];
+    uwu_op_state* op_state = &state->op_states[state->current_op];
+    switch (opcode) {
         case UWU_PRINT_STRING: {
-            char* string = op->state.print_string.string;
-            size_t remaining = op->state.print_string.remaining_chars;
+            const char* string = op_state->print_string.string;
+            size_t remaining = op_state->print_string.remaining_chars;
 
             if (remaining == 0) {
                 state->current_op--;
@@ -85,21 +143,28 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
 
             size_t num_chars_to_copy = remaining > len ? len : remaining;
 
-            COPY_STR(buf, string, num_chars_to_copy);
+            if (state->capitalize_next) {
+                char first = string[0];
+                maybe_capitalize(state, &first);
+                COPY_CHAR(first, buf);
+                if (num_chars_to_copy > 1) COPY_STR(buf + 1, string + 1, num_chars_to_copy - 1);
+            } else {
+                COPY_STR(buf, string, num_chars_to_copy);
+            }
 
             // Advance state by number of characters copied;
-            op->state.print_string.string += num_chars_to_copy;
-            op->state.print_string.remaining_chars -= num_chars_to_copy;
+            op_state->print_string.string += num_chars_to_copy;
+            op_state->print_string.remaining_chars -= num_chars_to_copy;
 
             return num_chars_to_copy;
         }
 
         case UWU_MARKOV: {
-            size_t ngram_index = op->state.markov.prev_ngram;
-            const uwu_markov_table* table = op->state.markov.ngrams;
+            size_t ngram_index = op_state->markov.prev_ngram;
+            const uwu_markov_table* table = op_state->markov.ngrams;
             const uwu_markov_ngram* ngrams = table->ngrams;
             const uwu_markov_choice* choices = table->choices;
-            size_t remaining = op->state.markov.remaining_chars;
+            size_t remaining = op_state->markov.remaining_chars;
 
             if (remaining == 0) {
                 state->current_op--;
@@ -131,29 +196,48 @@ static int uwu_exec_op(uwu_state* state, char* buf, size_t len) {
                     table->specials[special_idx](state);
                     break;
                 } else {
+                    maybe_capitalize(state, &ngram_char);
                     COPY_CHAR(ngram_char, buf + i);
                 }
             }
 
-            op->state.markov.prev_ngram = ngram_index;
-            op->state.markov.remaining_chars -= i;
+            op_state->markov.prev_ngram = ngram_index;
+            op_state->markov.remaining_chars -= i;
 
             return i;
         }
 
         case UWU_REPEAT_CHARACTER: {
-            char c = op->state.repeat_character.character;
+            char c = op_state->repeat_character.character;
             size_t i;
             for (i = 0; i < len; i++) {
-                if (op->state.repeat_character.remaining_chars == 0) {
+                if (op_state->repeat_character.remaining_chars == 0) {
                     // Out of characters. Return the number of characters thus written.
                     state->current_op--;
                     return i;
                 }
+                maybe_capitalize(state, &c);
                 COPY_CHAR(c, buf + i);
-                op->state.repeat_character.remaining_chars--;
+                op_state->repeat_character.remaining_chars--;
             }
             return len;
+        }
+
+        case UWU_GENERATE: {
+            if (op_state->generate.remaining_iterations == 0) {
+                state->current_op--;
+                return 0;
+            }
+
+            op_state->generate.remaining_iterations--;
+            op_state->generate.factory(state);
+            return uwu_exec_op(state, buf, len);
+        }
+
+        case UWU_CAPITALIZE_NEXT: {
+            state->capitalize_next = true;
+            state->current_op--;
+            return 0;
         }
 
         default: return 0;
@@ -186,6 +270,7 @@ static int uwu_init_state(uwu_state* state, uwu_op_factory** ops_table, size_t n
 
     state->current_op = -1;
     state->prev_op = -1;
+    state->capitalize_next = false;
 
     return 0;
 }

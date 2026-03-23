@@ -1,18 +1,8 @@
-KERNELRELEASE ?= $(shell uname -r)
-KERNEL_DIR ?= /lib/modules/$(KERNELRELEASE)/build/
 EXTRA_CFLAGS += -I`pwd` -Wno-declaration-after-statement
 
-usermode: CFLAGS += -O3 -std=c99
-wasm: CFLAGS += -Oz -std=c99
-sharedlib: CFLAGS += -O3 -std=c99 -fPIC
-
-obj-m += uwurandom.o
-
-kernel:
-	make -C $(KERNEL_DIR) M=`pwd` modules
-
-clean-kernel:
-	make -C $(KERNEL_DIR) M=`pwd` clean
+usermode: CFLAGS += -O3 -std=c99 -lm
+wasm: CFLAGS += -Oz -std=c99 -lm
+sharedlib: CFLAGS += -O3 -std=c99 -fPIC -lm
 
 usermode:
 	$(CC) $(CFLAGS) uwurandom_user.c -o uwurandom
@@ -38,4 +28,4 @@ sharedlib:
 clean-sharedlib:
 	rm -f libuwurandom.so
 
-clean: clean-usermode clean-wasm clean-js clean-sharedlib clean-kernel
+clean: clean-usermode clean-wasm clean-js clean-sharedlib
