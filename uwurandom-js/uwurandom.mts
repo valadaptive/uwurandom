@@ -21,13 +21,12 @@ const {uwuwasm_init, uwuwasm_free, uwuwasm_write_chars, malloc, free, memory} = 
     free(ptr: number): void;
     memory: WebAssembly.Memory;
 };
-const DECODER = new TextDecoder();
-
 /**
  * Stateful uwurandom generator.
  */
 export class UwurandomState {
     declare private readonly ptr: number;
+
     constructor() {
         this.ptr = uwuwasm_init();
         if (this.ptr === 0) {
@@ -69,6 +68,7 @@ interface ProtectedDestBuffer {
 export class DestBuffer {
     declare private readonly ptr: number;
     declare private readonly size: number;
+    private readonly decoder = new TextDecoder();
 
     /**
      * Allocate a new buffer.
@@ -93,16 +93,19 @@ export class DestBuffer {
     }
 
     /**
-     * @returns The text contents of this buffer.
+     * Decode the buffer contents as text using a streaming decoder.
+     * Correctly handles multi-byte characters split across consecutive
+     * generate() calls into this buffer.
      */
     asText() {
-        return DECODER.decode(this.asTypedArray());
+        return this.decoder.decode(this.asTypedArray(), {stream: true});
     }
 
     /**
-     * Free this buffer's underlying WASM memory.
+     * Free this buffer's underlying WASM memory and flush the decoder.
      */
     destroy() {
+        this.decoder.decode(new Uint8Array(0));
         free(this.ptr);
     }
 }

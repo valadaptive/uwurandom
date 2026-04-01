@@ -97,11 +97,11 @@ static inline uint32_t* uwu_side_data(uwu_state* state) {
 }
 
 static inline void uwu_get_side_data(uwu_state* state, uint8_t op_idx, void* dst) {
-    memcpy(dst, &state->side_data[op_idx], sizeof(uint32_t));
+    COPY_STR((char*)dst, (const char*)&state->side_data[op_idx], sizeof(uint32_t));
 }
 
 static inline void uwu_set_side_data(uwu_state* state, uint8_t op_idx, const void* src) {
-    memcpy(&state->side_data[op_idx], src, sizeof(uint32_t));
+    COPY_STR((char*)&state->side_data[op_idx], (const char*)src, sizeof(uint32_t));
 }
 
 // Pick a random program from the list of programs and write it to the ops list

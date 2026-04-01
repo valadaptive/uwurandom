@@ -5,7 +5,7 @@
 #include "uwurandom_types.h"
 #include "uwurandom_markov_data.h"
 #include "uwurandom_core.h"
-#include <string.h>
+
 
 static string_with_len actions[] = {
     STRING_WITH_LEN("*tilts head*"),
@@ -465,7 +465,7 @@ static inline void list_item(uwu_state* state, bool is_numbered, bool has_emoji,
         uwu_push_op(state, CREATE_PRINT_STRING("- "));
     }
     if (list_state.indentation > 0) {
-        uwu_push_op(state, CREATE_REPEAT_CHARACTER(' ', list_state.indentation * 2));
+        uwu_push_op(state, CREATE_REPEAT_CHARACTER(' ', list_state.indentation * 3));
     }
 }
 
@@ -639,7 +639,7 @@ const double BODY_LEN_MIN_P = 0.2;
 static inline uwu_random_number code_body_len(uwu_state* state, uwu_random_number indentation) {
     double p = BODY_LEN_P + (BODY_LEN_P_ADJUST * indentation);
     if (p < BODY_LEN_MIN_P) p = BODY_LEN_MIN_P;
-    return uwu_random_geom(state, p);
+    return uwu_random_geom(state, p) + 1;
 }
 
 static void uwu_op_code_loop(uwu_state* state) {

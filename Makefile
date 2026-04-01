@@ -1,8 +1,8 @@
 EXTRA_CFLAGS += -I`pwd` -Wno-declaration-after-statement
 
-usermode: CFLAGS += -O3 -std=c99 -lm
-wasm: CFLAGS += -Oz -std=c99 -lm
-sharedlib: CFLAGS += -O3 -std=c99 -fPIC -lm
+usermode: CFLAGS += -O3 -std=c99
+wasm: CFLAGS += -Oz -std=c99
+sharedlib: CFLAGS += -O3 -std=c99 -fPIC
 
 usermode:
 	$(CC) $(CFLAGS) uwurandom_user.c -o uwurandom

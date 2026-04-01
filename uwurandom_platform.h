@@ -1,7 +1,6 @@
 #ifndef _UWURANDOM_PLATFORM_H
 #define _UWURANDOM_PLATFORM_H
 
-#include <math.h>
 #if defined(__WASM__)
 #else
 
@@ -18,8 +17,8 @@ __attribute__((import_name("uwuwasm_getrandom"))) void uwuwasm_getrandom(void* b
 #define UWU_GETRANDOM(buf, len) (uwuwasm_getrandom((buf), (len)))
 
 
-#define COPY_STR(dst, src, len) for (size_t i = 0; i < len; i++) {\
-    dst[i] = src[i];\
+#define COPY_STR(dst, src, len) for (size_t i = 0; i < (len); i++) {\
+    (dst)[i] = (src)[i];\
 }
 
 extern void *malloc (size_t __size);
@@ -115,13 +114,46 @@ static inline uwu_random_number uwu_random_range(uwu_state* state, uwu_random_nu
 }
 
 /**
+ * @brief Attempt to approximate the natural logarithm of `x` without libm.
+ *
+ * Uses the IEEE 754 bit representation to extract a rough log2(x), then refines
+ * the mantissa's contribution using a Taylor polynomial for ln(1 + t).
+ */
+static inline double uwu_ln(double x) {
+    union { double d; uint64_t i; } u = { .d = x };
+
+    // Extract the exponent from the IEEE 754 representation.
+    // This is the integer part of log2(x).
+    int e = (int)((u.i >> 52) & 0x7FF) - 1023;
+
+    // Normalize mantissa to [1, 2) by setting the exponent field to 1023.
+    u.i = (u.i & 0x000FFFFFFFFFFFFFULL) | 0x3FF0000000000000ULL;
+    double m = u.d;
+
+    // Further reduce to [1, sqrt(2)) for better polynomial convergence.
+    if (m > 1.4142135623730951) {
+        m *= 0.5;
+        e++;
+    }
+
+    // t is now in [0, 0.4142...). Approximate ln(1 + t) using a degree-7 Taylor
+    // polynomial. The truncation error is bounded by t^8/8 < 0.00011.
+    double t = m - 1.0;
+    double ln_m = t * (1.0 + t * (-1.0/2.0 + t * (1.0/3.0 + t * (-1.0/4.0
+                 + t * (1.0/5.0 + t * (-1.0/6.0 + t * (1.0/7.0)))))));
+
+    // ln(x) = e * ln(2) + ln(m)
+    return (double)e * 0.6931471805599453 + ln_m;
+}
+
+/**
  * @brief Generates a random number from `min` (inclusive) to `max` (exclusive).
  */
 static inline uwu_random_number uwu_random_geom(uwu_state* state, double p) {
     double u = (uwu_random_int(state) + 0.5) / (double)UWU_RAND_MAX;
-    // Hopefully, the inline + multiply-by-reciprocal approach means that `(1.0 / log(1.0 - p))` is evaluated at
+    // Hopefully, the inline + multiply-by-reciprocal approach means that `(1.0 / uwu_ln(1.0 - p))` is evaluated at
     // compile time.
-    return (uwu_random_number)(log(u) * (1.0 / log(1.0 - p)));
+    return (uwu_random_number)(uwu_ln(u) * (1.0 / uwu_ln(1.0 - p)));
 }
 
 #define COPY_CHAR(value, dst) do {\
